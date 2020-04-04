@@ -2,40 +2,40 @@
 #define ENVIRONNEMENT_H
 
 /*
- *	Traduit un fichier de type définition de labyrinthe au format interne.
+ *	Traduit un fichier de type dï¿½finition de labyrinthe au format interne.
  */
 
 #define EMPTY	0		// case vide (ou on peut marcher!)
 
-extern void partie_terminee (bool win); 
+extern void partie_terminee (bool win);
 extern void message (const char* format, ...);
 
 class Mover;
 
 struct Wall {
 	int	_x1, _y1;	// point de depart.
-	int	_x2, _y2;	// point d'arrivée.
-	int	_ntex;		// numéro de texture.
+	int	_x2, _y2;	// point d'arrivï¿½e.
+	int	_ntex;		// numï¿½ro de texture.
 };
 
 struct Box {
 	int	_x, _y;		// emplacement.
-	int	_ntex;		// numéro de texture.
+	int	_ntex;		// numï¿½ro de texture.
 };
 
 class Environnement {
 public:
 	static const int scale;		// facteur d'echelle (defini par moi, mais utilise par vous)
-	static const char* texture_dir;	// répertoire des textures.
-	static const char* modele_dir;	// répertoire des personnages.
+	static const char* texture_dir;	// rï¿½pertoire des textures.
+	static const char* modele_dir;	// rï¿½pertoire des personnages.
 /*
- * la fonction de création du labyrinthe à définir DANS Labyrinthe.cpp de la façon suivante:
- * 
+ * la fonction de crï¿½ation du labyrinthe ï¿½ dï¿½finir DANS Labyrinthe.cpp de la faï¿½on suivante:
+ *
  * Environnement* Environnement::init (char* filename) {
  *	return new Labyrinthe (filename);
  * }
- * 
- * 
+ *
+ *
  */
 	static Environnement* init (char* filename);
 
@@ -45,7 +45,7 @@ public:
 	int		_npicts;	// leur nombre.
 	Box*	_boxes;		// les caisses.
 	int		_nboxes;	// leur nombre.
-	Box		_treasor;	// le trésor.
+	Box		_treasor;	// le trï¿½sor.
 	Mover**	_guards;	// les gardes (tableau de pointeurs de gardiens).
 	int		_nguards;	// leur nombre.
 
@@ -56,10 +56,10 @@ public:
 	// reconsidere le labyrinthe pour le reafficher.
 	// fonction a n'appeller QUE si les murs ou les caisses ou le tresor BOUGENT
 	void reconfigure ();
-	// retourne le numero de texture pour le fichier image passé en argument.
+	// retourne le numero de texture pour le fichier image passï¿½ en argument.
 	int wall_texture (char*);
-	// recrée les boules de feu des movers.
-	// fonction a n'appeller QUE si des gardiens sont recréés.
+	// recrï¿½e les boules de feu des movers.
+	// fonction a n'appeller QUE si des gardiens sont recrï¿½ï¿½s.
 	void make_fireballs (void);
 };
 

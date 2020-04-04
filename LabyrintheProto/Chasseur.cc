@@ -1,4 +1,11 @@
+#include "Labyrinthe.h"
 #include "Chasseur.h"
+#include "Gardien.h"
+#include <time.h>
+#include <stdlib.h>
+#include <iostream>
+
+using namespace std;
 
 /*
  *	Tente un deplacement.
@@ -29,16 +36,39 @@ Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
 }
 
 /*
- *	Fait bouger la boule de feu (ceci est une exemple, à vous de traiter les collisions spécifiques...)
+ *	Fait bouger la boule de feu (ceci est une exemple, ï¿½ vous de traiter les collisions spï¿½cifiques...)
  */
 
 bool Chasseur::process_fireball (float dx, float dy)
 {
+
 	// calculer la distance entre le chasseur et le lieu de l'explosion.
 	float	x = (_x - _fb -> get_x ()) / Environnement::scale;
 	float	y = (_y - _fb -> get_y ()) / Environnement::scale;
+
 	float	dist2 = x*x + y*y;
+
+	// calculer la distance maximum en ligne droite.
+	float	dmax2 = (_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ());
+
 	// on bouge que dans le vide!
+	for (int i = 1; i < _l -> _nguards; ++i) {
+
+
+		// tester la collision avec un gardient.
+		if ((int)((_fb -> get_x () + dx) / Environnement::scale) == (int)((_l -> _guards [i] -> _x) / Environnement::scale ) &&
+		(int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [i] -> _y) / Environnement::scale))
+		{
+
+			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead())) {
+
+				message ("Bit it!");
+				((Gardien *)(_l ->  _guards [i])) -> hit();
+				return false;
+			}
+		}
+	}
+
 	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
 							 (int)((_fb -> get_y () + dy) / Environnement::scale)))
 	{
@@ -46,19 +76,22 @@ bool Chasseur::process_fireball (float dx, float dy)
 		// il y a la place.
 		return true;
 	}
+
 	// collision...
-	// calculer la distance maximum en ligne droite.
-	float	dmax2 = (_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ());
+
 	// faire exploser la boule de feu avec un bruit fonction de la distance.
 	_wall_hit -> play (1. - dist2/dmax2);
 	message ("Booom...");
-	// teste si on a touché le trésor: juste pour montrer un exemple de la
-	// fonction « partie_terminee ».
+
+	// teste si on a touchï¿½ le trï¿½sor: juste pour montrer un exemple de la
+	// fonction ï¿½ partie_terminee ï¿½.
 	if ((int)((_fb -> get_x () + dx) / Environnement::scale) == _l -> _treasor._x &&
 		(int)((_fb -> get_y () + dy) / Environnement::scale) == _l -> _treasor._y)
 	{
 		partie_terminee (true);
 	}
+
+
 	return false;
 }
 
@@ -71,19 +104,38 @@ void Chasseur::fire (int angle_vertical)
 	message ("Woooshh...");
 	_hunter_fire -> play ();
 	_fb -> init (/* position initiale de la boule */ _x, _y, 10.,
-				 /* angles de visée */ angle_vertical, _angle);
+				 /* angles de visï¿½e */ angle_vertical, _angle);
 }
+
 
 /*
- *	Clic droit: par défaut fait tomber le premier gardien.
+ *	Clic droit: par dï¿½faut fait tomber le premier gardien.
  *
  *	Inutile dans le vrai jeu, mais c'est juste pour montrer
- *	une utilisation des fonctions « tomber » et « rester_au_sol »
+ *	une utilisation des fonctions ï¿½ tomber ï¿½ et ï¿½ rester_au_sol ï¿½
  */
 
-void Chasseur::right_click (bool shift, bool control) {
-	if (shift)
-		_l -> _guards [1] -> rester_au_sol ();
-	else
-		_l -> _guards [1] -> tomber ();
-}
+ void Chasseur::right_click (bool shift, bool control) {                       // this funtion doesn't work! it's fake
+
+ 	if (shift) {
+ 		cout<<"hahaha"<<endl;
+ 	} else {
+
+ 		int x_tele = 0;
+ 		int y_tele = 0;
+
+ 		while (true) {
+
+ 			srand((unsigned int)(time(NULL)));
+ 			x_tele = rand()%(_l -> width ());
+ 			y_tele = rand()%(_l -> height ());
+
+ 			if (EMPTY == _l -> data (x_tele, y_tele) && ((Labyrinthe *)(_l)) -> distance_to_tresor (x_tele, y_tele) > 20) {
+ 				break;
+ 			}
+ 		}
+
+ 		_x = x_tele * Environnement::scale;
+ 		_y = y_tele * Environnement::scale;
+ 	}
+ }

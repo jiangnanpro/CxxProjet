@@ -1,4 +1,4 @@
-## This is a FPS implement in C++/OpenGL.
+## This is a FPS game implement in C++/OpenGL.
 
 ### State of art:
 

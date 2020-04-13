@@ -45,9 +45,9 @@ bool Chasseur::process_fireball (float dx, float dy)
 	// calculer la distance entre le chasseur et le lieu de l'explosion.
 	float	x = (_x - _fb -> get_x ()) / Environnement::scale;
 	float	y = (_y - _fb -> get_y ()) / Environnement::scale;
-
 	float	dist2 = x*x + y*y;
 
+	// By HUANG
 	// calculer la distance maximum en ligne droite.
 	float	dmax2 = (_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ());
 
@@ -68,6 +68,7 @@ bool Chasseur::process_fireball (float dx, float dy)
 			}
 		}
 	}
+	// By HUANG
 
 	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
 							 (int)((_fb -> get_y () + dy) / Environnement::scale)))
@@ -115,6 +116,8 @@ void Chasseur::fire (int angle_vertical)
  *	une utilisation des fonctions � tomber � et � rester_au_sol �
  */
 
+
+// By HUANG
  void Chasseur::right_click (bool shift, bool control) {                       // this funtion doesn't work! it's fake
 
  	if (shift) {
@@ -139,3 +142,4 @@ void Chasseur::fire (int angle_vertical)
  		_y = y_tele * Environnement::scale;
  	}
  }
+ // By HUANG

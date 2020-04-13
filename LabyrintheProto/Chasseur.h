@@ -10,7 +10,7 @@ class Labyrinthe;
 class Chasseur : public Mover {
 private:
 
-	int lives = 3;                                   // hunter has 3 lives.
+	int lives = 100;                                   // hunter has 3 lives.
 
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);

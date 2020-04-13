@@ -11,9 +11,11 @@ Sound*	Chasseur::_hunter_fire;	// bruit de l'arme du chasseur.
 Sound*	Chasseur::_hunter_hit;	// cri du chasseur touch�.
 Sound*	Chasseur::_wall_hit;	// on a tap� un mur.
 
+// By HUANG
 Sound*	Gardien::_guard_fire;	// bruit de l'arme du chasseur.
 Sound*	Gardien::_guard_hit;	// cri du chasseur touch�.
 Sound*	Gardien::_wall_hit;	// on a tap� un mur.
+// By HUANG
 
 char** readLabyrinthe(char* filename);
 int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, int* nWall, std::vector<Wall*>& murs,int* nPoienture, std::vector<Wall*>& peintures);
@@ -91,6 +93,8 @@ Labyrinthe::Labyrinthe (char* filename)
 					boites[nBoite]->_y = j;
 					nBoite++;
 				}
+
+				// By HUANG
 				if (fileData[i][j] == 'T')
 				{
 					_treasor._x = i;
@@ -125,7 +129,7 @@ Labyrinthe::Labyrinthe (char* filename)
 		}
 
 	set_max_distance(fillDistance(_data, _distance_to_tresor, lab_width, lab_height));
-
+	// By HUANG
 
 	// taille du labyrinthe.
 
@@ -174,10 +178,12 @@ Labyrinthe::Labyrinthe (char* filename)
 	 _guards[0]->_y = c->_y;
 	for (int i = 1; i < _nguards; ++i)
 	{
+		// By HUANG
 		if (i % 2 == 0 && i % 4 != 0) {_guards[i] = new Gardien (this, "drfreak",i-1); }
 		if (i % 2 == 0 && i % 4 == 0) {_guards[i] = new Gardien (this, "garde",i-1); }
 		if (i % 2 != 0 && (i+1) % 4 != 0) {_guards[i] = new Gardien (this, "Marvin",i-1); }
 		if (i % 2 != 0 && (i+1) % 4 == 0) {_guards[i] = new Gardien (this, "Potator",i-1); }
+		// By HUANG
 		_guards[i]->_x = g[i-1]->_x;
 		_guards[i]->_y = g[i-1]->_y;
 
@@ -187,7 +193,11 @@ Labyrinthe::Labyrinthe (char* filename)
 		//_data [(int)(_guards[i+1]->_x / scale)][(int)(_guards[i+1]->_y / scale)] = 1;
 	}
 
-
+	cout<<"scale:"<< scale<< endl;
+	int dis_chasseur_x = _guards[0]->_x/scale;
+	int dis_chasseur_y = _guards[0]->_y/scale;
+	cout<<"dis"<< _distance_to_tresor[dis_chasseur_x][dis_chasseur_y] << endl;
+	cout << "map loaded............." << endl;
 }
 
 
@@ -282,11 +292,12 @@ void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, 
 
 }
 
+// By HUANG
 int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab_height) {
 
 	int all_fill = 1;
 	int count_case = 0;
-  int max_distance = 0;
+  	int max_distance = 0;
 
 	while (all_fill) {
 		int new_count = 0;
@@ -313,6 +324,7 @@ int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab
 		all_fill = new_count - count_case;
 		count_case = new_count;
 	}
+
 
 	return max_distance;
 }

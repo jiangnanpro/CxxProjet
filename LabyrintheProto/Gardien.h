@@ -67,6 +67,7 @@ public:
 
 	void hit(int puissance) { lives -= puissance; }
 
+	float get_distance_to_chasseur() { return distance_to_chasseur;}
 	int num_of_guard_dead();
 	int get_lives() { return lives; }
 	int dis_to_tresor_of_chasseur();                                                //return the distance to tresor of chasseur

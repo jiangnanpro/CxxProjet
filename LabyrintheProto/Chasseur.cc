@@ -63,16 +63,17 @@ bool Chasseur::process_fireball (float dx, float dy)
 			((Gardien *)(_l ->  _guards [i])) -> _guard_hit -> play (1. - dist2/dmax2);
 			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead())) {
 
-				((Gardien *)(_l ->  _guards [i])) -> hit(puissance_attaque);
-
-				cout<<((Gardien *)(_l ->  _guards [i])) -> get_lives()<<endl;
+				((Gardien *)(_l ->  _guards [i])) -> hit(( 1 - (((Gardien *)(_l ->  _guards [i])) -> get_distance_to_chasseur())/1000) * puissance_attaque);
+				// cout<< ((Gardien *)(_l ->  _guards [i])) -> get_distance_to_chasseur()<<endl;
+				// cout<<dmax2<<endl;
+				// cout<<((Gardien *)(_l ->  _guards [i])) -> get_lives()<<endl;
 				if (((Gardien *)(_l ->  _guards [i])) -> get_lives() <= 0) {
 					message ("Kill one.");
 					((Gardien *)(_l ->  _guards [i])) -> dead();
 					((Gardien *)(_l ->  _guards [i])) -> rester_au_sol();
 				}
 			}
-			
+
 			return false;
 
 		}

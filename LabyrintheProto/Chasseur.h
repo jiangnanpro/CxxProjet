@@ -11,7 +11,7 @@ class Chasseur : public Mover {
 private:
 
 	int lives = 100;                                   // hunter has 100 HP.
-	int puissance_attaque = 80;
+	int puissance_attaque = 120;
 
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);

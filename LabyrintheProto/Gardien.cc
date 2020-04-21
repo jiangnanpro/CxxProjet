@@ -24,7 +24,7 @@ bool Gardien::move_aux (double dx, double dy)
 		return true;
 	}
 
-	
+
 	return false;
 }
 
@@ -36,7 +36,7 @@ void Gardien::update() {
 		update_defense();
 
 		if (!fix_angle) {																							// if collision with an obstacle, change randomly the moving angle for the gardien.
-			_angle = _angle + 90 + rand()%90;																		// plus 90 first to avoid a similar random angle witch still against the obstacle.
+			_angle = _angle + 90 + rand()%90;														// plus 90 first to avoid a similar random angle witch still against the obstacle.
 			fix_angle = true;																						// then fix it.
 		}
 		float step_x = - 0.3*sin(_angle * PI / 180);
@@ -45,13 +45,13 @@ void Gardien::update() {
 		distance_to_chasseur_y = _y - _l -> _guards[0] -> _y;
 		distance_to_chasseur = sqrt(pow(distance_to_chasseur_x,2) + pow(distance_to_chasseur_y,2));
 		angle_to_chasseur =  180 - atan2(distance_to_chasseur_x,distance_to_chasseur_y)*180 / PI;
-		float	dmax = sqrt((_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ()))*Environnement::scale;
+		// float	dmax = sqrt((_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ()))*Environnement::scale;
 
-		if (isHit) {																													// if the gardien is hit by the hunter, it dies.
-			_guard_hit -> play (1. - distance_to_chasseur/dmax);
-			dead();																														// *** but actually it should have several lives, or maybe it can recover itself ***
-			rester_au_sol ();
-		}
+		// if (isHit) {																													// if the gardien is hit by the hunter, it dies.
+		// 	_guard_hit -> play (1. - distance_to_chasseur/dmax);
+		// 	dead();																														// *** but actually it should have several lives, or maybe it can recover itself ***
+		// 	rester_au_sol ();
+		// }
 
 
 		switch(num_of_mode) {
@@ -61,7 +61,7 @@ void Gardien::update() {
 			}
 
 			case 1: {																	// The guards begin to approach the treasure, because they felt some threats: defense>hreat_level_move
-				cout << "1 num_of_mode:" << num_of_mode <<endl;
+				// cout << "1 num_of_mode:" << num_of_mode <<endl;
 				times_of_spead = 0.5;
 				go_to_treasure();
 				judge_mode(step_x, step_y);
@@ -74,7 +74,7 @@ void Gardien::update() {
 				judge_mode(step_x, step_y);
 				break;
 			}
-			
+
 			case 3: {
 				times_of_spead = 0.5;
 				if (!see_chasseur()) {													// if it can't see hunter anymore, return to the last mode.
@@ -97,8 +97,6 @@ void Gardien::update() {
 		    move(step_x,step_y);                                                         // and move to hunter.
 				break;
 			}
-
-
 
 
 			default:
@@ -124,13 +122,16 @@ bool Gardien::process_fireball (float dx, float dy) {
 	(int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [0] -> _y) / Environnement::scale))
 	{
 
-			message ("You are hurt! Fight back! Lives %d / 3", ((Chasseur *)(_l ->  _guards [0])) -> get_lives()-1);
-			((Chasseur *)(_l ->  _guards [0])) -> _hunter_hit -> play (1. - dist2/dmax2);
-			((Chasseur *)(_l ->  _guards [0])) -> hit();
 
-			if (((Chasseur *)(_l ->  _guards [0])) -> get_lives() == 0) {													// if hunter loss all his lives, he die, and mission failed.
+			((Chasseur *)(_l ->  _guards [0])) -> _hunter_hit -> play (1. - dist2/dmax2);
+			((Chasseur *)(_l ->  _guards [0])) -> hit((1-distance_to_chasseur/max_view_distance)*max_puissance_attaque);
+
+			if (((Chasseur *)(_l ->  _guards [0])) -> get_lives() <= 0) {													// if hunter loss all his HP, he die, and mission failed.
 				message ("You die.");
 				partie_terminee (false);
+			}
+			else {
+				message ("You are hurt! Fight back! HP %d / 100", ((Chasseur *)(_l ->  _guards [0])) -> get_lives());
 			}
 			return false;
 	}
@@ -182,8 +183,8 @@ bool Gardien::see_chasseur () {
 	}
 }
 
+//By LIU
 void Gardien::update_defense() {
-
 
 	defense = 0;
 	float defense_max = (float)(((Labyrinthe *)(_l)) -> get_max_distance());
@@ -193,9 +194,10 @@ void Gardien::update_defense() {
 	defense = defense + (defense_max - defense_i) /  defense_max * 3;
 	defense = defense + (defense_max - chasseur_dis )/  defense_max * 8;
 	defense = defense + num_of_guard_dead() * 0.5;
-	
+
 }
 
+//By LIU
 int Gardien::num_of_guard_dead() {
 
 	int res = 0;
@@ -207,11 +209,11 @@ int Gardien::num_of_guard_dead() {
 	return res;
 }
 
-
+//By LIU
 void Gardien::judge_mode(float step_x, float step_y) {
 
-	
-	if(defense < threat_level_move) 
+
+	if(defense < threat_level_move)
 		 num_of_mode = 0;
 	else if (defense >= threat_level_move && defense < threat_level_move_fast)
 	{
@@ -222,7 +224,7 @@ void Gardien::judge_mode(float step_x, float step_y) {
 	}
 
 
-	if(!move_aux(step_x,step_y)) {                                         													
+	if(!move_aux(step_x,step_y)) {
 		fix_angle = false;
 	}
 
@@ -238,6 +240,7 @@ void Gardien::judge_mode(float step_x, float step_y) {
 
 }
 
+//By LIU
 int Gardien::dis_to_tresor_of_chasseur() {
 
 	int chasseur_x = (int)((_l -> _guards [0] -> _x) / Environnement::scale );
@@ -247,6 +250,7 @@ int Gardien::dis_to_tresor_of_chasseur() {
 	return dis;
 }
 
+//By LIU
 void Gardien::go_to_treasure() {
 
 	//Determine where to go next based on the surrounding distance_to_tresor

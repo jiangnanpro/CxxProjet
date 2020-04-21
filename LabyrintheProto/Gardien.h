@@ -12,16 +12,16 @@ class Gardien : public Mover {
 private:
 
 	int id_of_gardien;
+	int lives = 100;
 
 	bool isDead = false;
-	bool isHit = false;
 
 	bool fix_angle = false;													  // if the gardien doesn't meet an obstacle then fix the moving angle.
 	int wait_for_fire = 50;													  // once fired, waiting for 50 loops for the next fire.
 	int num_of_mode = 0;													  // mode of gardien: 0 for patrouille, 1 for going to tresor to protect it, 2 for running quicklier to tresor, 3 for attaque.
 	int num_of_ex_mode = 0;													  // stock the ex-mode of gardien.
 	float times_of_spead = 0.5;
-	float defense = 0.;														  // defense value of gardien, 
+	float defense = 0.;														  // defense value of gardien,
 	// float defense_threshold = 8.;		replaced						  // *** here I set it 8, but maybe this threshold should be changed automatically... ***
 
 	float threat_level_move = 6.;
@@ -32,7 +32,7 @@ private:
 	float distance_to_chasseur;												   // euclidean distance between gardien and hunter.
 	float angle_to_chasseur;												   // angle makes the gardien face to the hunter.
 	float max_view_distance = 20 * Environnement::scale;        			   // farthest distance that the gardien can see.
-
+	float max_puissance_attaque = 15;
 
 	bool move_aux (double dx, double dy);
 
@@ -65,14 +65,14 @@ public:
 	bool is_dead () { return isDead; }
 	void dead() { isDead = true; }
 
-	bool is_hit () { return isHit; }
-	void hit() { isHit = true; }
+	void hit(int puissance) { lives -= puissance; }
 
-	bool see_chasseur();															// return true if it can see the hunter.
-	void update_defense(void);
-	int num_of_guard_dead();                                                        
-	void judge_mode(float step_x, float step_y);                                    //Judge and assign value to num_of_mode
+	int num_of_guard_dead();
+	int get_lives() { return lives; }
 	int dis_to_tresor_of_chasseur();                                                //return the distance to tresor of chasseur
+	bool see_chasseur();																														// return true if it can see the hunter.
+	void update_defense(void);
+	void judge_mode(float step_x, float step_y);                                    //Judge and assign value to num_of_mode
 	void go_to_treasure();                                                          //The guard walks directly to the direction of the treasure to protect the treasure
 };
 

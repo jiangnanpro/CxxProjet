@@ -20,7 +20,7 @@ Sound*	Gardien::_wall_hit;	// on a tap� un mur.
 char** readLabyrinthe(char* filename);
 int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, int* nWall, std::vector<Wall*>& murs,int* nPoienture, std::vector<Wall*>& peintures);
 void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, int* nWall, std::vector<Wall*>& murs,int* nPoienture, std::vector<Wall*>& peintures);
-int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab_height);
+int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab_height, int treasor_x, int treasor_y);
 
 
 Environnement* Environnement::init (char* filename)
@@ -100,14 +100,6 @@ Labyrinthe::Labyrinthe (char* filename)
 					_treasor._x = i;
 					_treasor._y = j;
 					_distance_to_tresor [i][j] = 0;
-					if (_data[i+1][j] == 0 && _distance_to_tresor[i+1][j] == -1) { _distance_to_tresor[i+1][j] = _distance_to_tresor[i][j]+1; }
-					if (_data[i-1][j] == 0 && _distance_to_tresor[i-1][j] == -1) { _distance_to_tresor[i-1][j] = _distance_to_tresor[i][j]+1; }
-					if (_data[i][j+1] == 0 && _distance_to_tresor[i][j+1] == -1) { _distance_to_tresor[i][j+1] = _distance_to_tresor[i][j]+1; }
-					if (_data[i][j-1] == 0 && _distance_to_tresor[i][j-1] == -1) { _distance_to_tresor[i][j-1] = _distance_to_tresor[i][j]+1; }
-					if (_data[i+1][j+1] == 0 && _distance_to_tresor[i+1][j+1] == -1) { _distance_to_tresor[i+1][j+1] = _distance_to_tresor[i][j]+1; }
-					if (_data[i+1][j-1] == 0 && _distance_to_tresor[i+1][j-1] == -1) { _distance_to_tresor[i+1][j-1] = _distance_to_tresor[i][j]+1; }
-					if (_data[i-1][j+1] == 0 && _distance_to_tresor[i-1][j+1] == -1) { _distance_to_tresor[i-1][j+1] = _distance_to_tresor[i][j]+1; }
-					if (_data[i-1][j-1] == 0 && _distance_to_tresor[i-1][j-1] == -1) { _distance_to_tresor[i-1][j-1] = _distance_to_tresor[i][j]+1; }
 					//_data [_treasor._x][_treasor._y] = 1;
 					//_data [12][23] = 1;
 				}
@@ -128,7 +120,7 @@ Labyrinthe::Labyrinthe (char* filename)
 			}
 		}
 
-	set_max_distance(fillDistance(_data, _distance_to_tresor, lab_width, lab_height));
+	set_max_distance(fillDistance(_data, _distance_to_tresor, lab_width, lab_height, _treasor._x, _treasor._y));
 	// By HUANG
 
 	// taille du labyrinthe.
@@ -144,14 +136,18 @@ Labyrinthe::Labyrinthe (char* filename)
 		_walls[i]._ntex = 0;
 
 	}
-
-	char tmp[128];
-	sprintf (tmp, "%s/%s", texture_dir, "voiture.jpg");
+  // two types of texture.
+	char voiture[128];
+	char affiche[128];
+	sprintf (voiture, "%s/%s", texture_dir, "voiture.jpg");
+	sprintf (affiche, "%s/%s", texture_dir, "affiche.jpg");
 	_picts = new Wall[nPoienture];
 	_npicts = nPoienture;
 	for (int i = 0; i < nPoienture; ++i)
 	{
-		_picts[i]._ntex = wall_texture(tmp);
+		if (peintures[i]->_ntex == 1) {_picts[i]._ntex = wall_texture(affiche);}
+		else {_picts[i]._ntex = wall_texture(voiture);}
+
 		_picts[i]._x1 = peintures[i]->_x1;
 		_picts[i]._y1 = peintures[i]->_y1;
 		_picts[i]._x2 = peintures[i]->_x2;
@@ -189,7 +185,7 @@ Labyrinthe::Labyrinthe (char* filename)
 
 		// cout<<"x = "<<_guards[i]->_x <<endl;
 		// cout<<"y = "<<_guards[i]->_y <<endl<<endl;
-		//datat
+		// datat
 		//_data [(int)(_guards[i+1]->_x / scale)][(int)(_guards[i+1]->_y / scale)] = 1;
 	}
 
@@ -252,6 +248,17 @@ int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, i
 				peintures[*nPoienture]->_y1 = j;
 				peintures[*nPoienture]->_x2 = lines;
 				peintures[*nPoienture]->_y2 = j+2;
+				peintures[*nPoienture]->_ntex = 1;
+				(*nPoienture)++;
+			}
+			else if (data[lines][j] == 'b')
+			{
+				peintures.push_back(new Wall());
+				peintures[*nPoienture]->_x1 = lines;
+				peintures[*nPoienture]->_y1 = j;
+				peintures[*nPoienture]->_x2 = lines;
+				peintures[*nPoienture]->_y2 = j+2;
+				peintures[*nPoienture]->_ntex = 2;
 				(*nPoienture)++;
 			}
 		}
@@ -285,6 +292,17 @@ void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, 
 				peintures[*nPoienture]->_y1 = column;
 				peintures[*nPoienture]->_x2 = i+2;
 				peintures[*nPoienture]->_y2 = column;
+				peintures[*nPoienture]->_ntex = 1;
+				(*nPoienture)++;
+			}
+			else if (data[i][column] == 'b')
+			{
+				peintures.push_back(new Wall());
+				peintures[*nPoienture]->_x1 = i;
+				peintures[*nPoienture]->_y1 = column;
+				peintures[*nPoienture]->_x2 = i+2;
+				peintures[*nPoienture]->_y2 = column;
+				peintures[*nPoienture]->_ntex = 2;
 				(*nPoienture)++;
 			}
 		}
@@ -293,11 +311,20 @@ void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, 
 }
 
 // By HUANG
-int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab_height) {
+int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab_height, int treasor_x, int treasor_y) {
 
 	int all_fill = 1;
 	int count_case = 0;
-  	int max_distance = 0;
+  int max_distance = 0;
+
+	if (_data[treasor_x+1][treasor_y] == 0 && _distance_to_tresor[treasor_x+1][treasor_y] == -1) { _distance_to_tresor[treasor_x+1][treasor_y] = _distance_to_tresor[treasor_x][treasor_y]+1; }
+	if (_data[treasor_x-1][treasor_y] == 0 && _distance_to_tresor[treasor_x-1][treasor_y] == -1) { _distance_to_tresor[treasor_x-1][treasor_y] = _distance_to_tresor[treasor_x][treasor_y]+1; }
+	if (_data[treasor_x][treasor_y+1] == 0 && _distance_to_tresor[treasor_x][treasor_y+1] == -1) { _distance_to_tresor[treasor_x][treasor_y+1] = _distance_to_tresor[treasor_x][treasor_y]+1; }
+	if (_data[treasor_x][treasor_y-1] == 0 && _distance_to_tresor[treasor_x][treasor_y-1] == -1) { _distance_to_tresor[treasor_x][treasor_y-1] = _distance_to_tresor[treasor_x][treasor_y]+1; }
+	if (_data[treasor_x+1][treasor_y+1] == 0 && _distance_to_tresor[treasor_x+1][treasor_y+1] == -1) { _distance_to_tresor[treasor_x+1][treasor_y+1] = _distance_to_tresor[treasor_x][treasor_y]+1; }
+	if (_data[treasor_x+1][treasor_y-1] == 0 && _distance_to_tresor[treasor_x+1][treasor_y-1] == -1) { _distance_to_tresor[treasor_x+1][treasor_y-1] = _distance_to_tresor[treasor_x][treasor_y]+1; }
+	if (_data[treasor_x-1][treasor_y+1] == 0 && _distance_to_tresor[treasor_x-1][treasor_y+1] == -1) { _distance_to_tresor[treasor_x-1][treasor_y+1] = _distance_to_tresor[treasor_x][treasor_y]+1; }
+	if (_data[treasor_x-1][treasor_y-1] == 0 && _distance_to_tresor[treasor_x-1][treasor_y-1] == -1) { _distance_to_tresor[treasor_x-1][treasor_y-1] = _distance_to_tresor[treasor_x][treasor_y]+1; }
 
 	while (all_fill) {
 		int new_count = 0;
@@ -306,8 +333,9 @@ int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab
 			for (int j = 0; j < lab_height; ++j)
 			{
 				if (_data[i][j] == 0 && _distance_to_tresor[i][j] >= 0) {
+
 					new_count += 1;
-					// cout << "_distance_to_tresor[i][j] =  "<<_distance_to_tresor[i][j]<<endl;
+
 					if (_data[i+1][j] == 0 && _distance_to_tresor[i+1][j] == -1) { _distance_to_tresor[i+1][j] = _distance_to_tresor[i][j]+1; }
 					if (_data[i-1][j] == 0 && _distance_to_tresor[i-1][j] == -1) { _distance_to_tresor[i-1][j] = _distance_to_tresor[i][j]+1; }
 					if (_data[i][j+1] == 0 && _distance_to_tresor[i][j+1] == -1) { _distance_to_tresor[i][j+1] = _distance_to_tresor[i][j]+1; }
@@ -324,6 +352,17 @@ int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab
 		all_fill = new_count - count_case;
 		count_case = new_count;
 	}
+
+	// print and check the matirx.
+
+	// for (int i = 0; i < lab_width; ++i)
+	// {
+	// 	for (int j = 0; j < lab_height; ++j)
+	// 	{
+	// 		cout<<_distance_to_tresor[i][j]<<" ";
+	// 	}
+	// 	cout<<endl;
+	// }
 
 
 	return max_distance;

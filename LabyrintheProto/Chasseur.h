@@ -10,7 +10,8 @@ class Labyrinthe;
 class Chasseur : public Mover {
 private:
 
-	int lives = 100;                                   // hunter has 3 lives.
+	int lives = 100;                                   // hunter has 100 HP.
+	int puissance_attaque = 80;
 
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);
@@ -37,7 +38,7 @@ public:
 	// clic droit.
 	void right_click (bool shift, bool control);     // this is a fake function.
 
-	void hit () { lives -= 1; }                      // if be hit lives - 1.
+	void hit (int puissance) { lives -= puissance; }                      // if be hit lives - puissance_attaque.
 	int get_lives() { return lives; }
 };
 

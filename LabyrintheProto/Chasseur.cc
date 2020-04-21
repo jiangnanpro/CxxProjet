@@ -60,12 +60,21 @@ bool Chasseur::process_fireball (float dx, float dy)
 		(int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [i] -> _y) / Environnement::scale))
 		{
 
+			((Gardien *)(_l ->  _guards [i])) -> _guard_hit -> play (1. - dist2/dmax2);
 			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead())) {
 
-				message ("Bit it!");
-				((Gardien *)(_l ->  _guards [i])) -> hit();
-				return false;
+				((Gardien *)(_l ->  _guards [i])) -> hit(puissance_attaque);
+
+				cout<<((Gardien *)(_l ->  _guards [i])) -> get_lives()<<endl;
+				if (((Gardien *)(_l ->  _guards [i])) -> get_lives() <= 0) {
+					message ("Kill one.");
+					((Gardien *)(_l ->  _guards [i])) -> dead();
+					((Gardien *)(_l ->  _guards [i])) -> rester_au_sol();
+				}
 			}
+			
+			return false;
+
 		}
 	}
 	// By HUANG

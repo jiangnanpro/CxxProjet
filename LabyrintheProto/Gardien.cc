@@ -123,7 +123,7 @@ bool Gardien::process_fireball (float dx, float dy) {
 	{
 
 			//By HUANG new: puissance d'attaque augmente si la distance entre chasseur et gardien diminue.
-			
+
 			((Chasseur *)(_l ->  _guards [0])) -> _hunter_hit -> play (1. - dist2/dmax2);
 			((Chasseur *)(_l ->  _guards [0])) -> hit((1-distance_to_chasseur/max_view_distance)*max_puissance_attaque);
 
@@ -219,7 +219,7 @@ int Gardien::num_of_guard_dead() {
 //By LIU
 void Gardien::judge_mode(float step_x, float step_y) {
 
-
+  // cout<<"defense = "<<defense<<endl;
 	if(defense < threat_level_move)
 		 num_of_mode = 0;
 	else if (defense >= threat_level_move && defense < threat_level_move_fast)

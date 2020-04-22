@@ -54,11 +54,13 @@ Labyrinthe::Labyrinthe (char* filename)
 	int ng = 0;
 	_data = new char* [lab_width];
 	_distance_to_tresor = new int* [lab_width];
+	_around_boxs = new int* [lab_width];
 
 	for (int i = 0; i < lab_width; ++i)
 	{
 		_data[i] = new char [lab_height];
 		_distance_to_tresor[i] = new int [lab_height];
+		_around_boxs[i] = new int [lab_width];
 	}
 
 	for (int i = 0; i < lab_width; ++i)
@@ -67,6 +69,7 @@ Labyrinthe::Labyrinthe (char* filename)
 		{
 			_data[i][j] = 1;
 			_distance_to_tresor[i][j] = -1;
+			_around_boxs[i][j] = -1;
 		}
 	}
 
@@ -92,6 +95,11 @@ Labyrinthe::Labyrinthe (char* filename)
 					boites[nBoite]->_x = i;
 					boites[nBoite]->_y = j;
 					nBoite++;
+					_around_boxs[i][j] = 0;
+					_around_boxs[i+1][j] = 1;
+					_around_boxs[i-1][j] = 1;
+					_around_boxs[i][j+1] = 1;
+					_around_boxs[i][j-1] = 1;
 				}
 
 				// By HUANG
@@ -172,6 +180,7 @@ Labyrinthe::Labyrinthe (char* filename)
 	 _guards[0] = new Chasseur (this);
 	 _guards[0]->_x = c->_x;
 	 _guards[0]->_y = c->_y;
+	 
 	for (int i = 1; i < _nguards; ++i)
 	{
 		// By HUANG
@@ -189,10 +198,10 @@ Labyrinthe::Labyrinthe (char* filename)
 		//_data [(int)(_guards[i+1]->_x / scale)][(int)(_guards[i+1]->_y / scale)] = 1;
 	}
 
-	cout<<"scale:"<< scale<< endl;
+	cout<<"scale:"<< scale << endl;
 	int dis_chasseur_x = _guards[0]->_x/scale;
 	int dis_chasseur_y = _guards[0]->_y/scale;
-	cout<<"dis"<< _distance_to_tresor[dis_chasseur_x][dis_chasseur_y] << endl;
+	cout<<"dist:"<< _distance_to_tresor[dis_chasseur_x][dis_chasseur_y] << endl;
 	cout << "map loaded............." << endl;
 }
 

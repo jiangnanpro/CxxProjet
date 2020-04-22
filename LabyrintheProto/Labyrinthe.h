@@ -7,6 +7,7 @@ class Labyrinthe : public Environnement {
 private:
 	char	**_data;	// indique si la case est libre ou occup�e.
 	int		**_distance_to_tresor;
+	int   **_around_boxs;
 	int   	max_distance;   //153
 	int		lab_width;	// dimensions du rectangle.
 	int		lab_height;	// englobant le labyrinthe.
@@ -28,11 +29,21 @@ public:
 	{
 		return _data [i][j];
 	}
-	
 	int distance_to_tresor (int i, int j)
 	{
 		return _distance_to_tresor [i][j];
 	}
+
+	int around_boxs (int i, int j)
+	{
+		return _around_boxs [i][j];
+	}
+
+	void set_around_boxs (int i, int j)
+	{
+		_around_boxs [i][j] = 0;
+	}
+
 };
 
 #endif

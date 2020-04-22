@@ -13,6 +13,21 @@ using namespace std;
 
 bool Chasseur::move_aux (double dx, double dy)
 {
+	//By HUANG new: eat Medical kit.
+
+	if(((Labyrinthe *)(_l)) -> around_boxs((int)(_x / Environnement::scale),(int)(_y / Environnement::scale)) == 1)
+	{
+		  if (lives >= 80) {
+				lives = 100;
+			} else {
+				lives += 20;
+			}
+
+			((Labyrinthe *)(_l)) -> set_around_boxs((int)(_x / Environnement::scale),(int)(_y / Environnement::scale));
+			message ("Get 20 hp! %d", (int) lives);
+	}
+
+
 	if (EMPTY == _l -> data ((int)((_x + dx) / Environnement::scale),
 							 (int)((_y + dy) / Environnement::scale)))
 	{

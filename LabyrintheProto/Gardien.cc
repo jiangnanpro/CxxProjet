@@ -85,8 +85,8 @@ void Gardien::update() {
 				wait_for_fire -= 1;
 
 				_angle = angle_to_chasseur;                                             // set the angle face to hunter.
-			    step_x = - 0.5*sin(_angle * PI / 180);
-			    step_y = 0.5*cos(_angle * PI / 180);
+		    step_x = - 0.5*sin(_angle * PI / 180);
+		    step_y = 0.5*cos(_angle * PI / 180);
 
 				if (wait_for_fire == 0) {
 
@@ -122,11 +122,12 @@ bool Gardien::process_fireball (float dx, float dy) {
 	(int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [0] -> _y) / Environnement::scale))
 	{
 
-
+			//By HUANG new: puissance d'attaque augmente si la distance entre chasseur et gardien diminue.
+			
 			((Chasseur *)(_l ->  _guards [0])) -> _hunter_hit -> play (1. - dist2/dmax2);
 			((Chasseur *)(_l ->  _guards [0])) -> hit((1-distance_to_chasseur/max_view_distance)*max_puissance_attaque);
 
-			if (((Chasseur *)(_l ->  _guards [0])) -> get_lives() <= 0) {													// if hunter loss all his HP, he die, and mission failed.
+			if (((Chasseur *)(_l ->  _guards [0])) -> get_lives() <= 0) {					// if hunter loss all his HP, he die, and mission failed.
 				message ("You die.");
 				partie_terminee (false);
 			}
@@ -147,10 +148,16 @@ bool Gardien::process_fireball (float dx, float dy) {
 	return false;
 }
 
+//By HUANG new: fire angle drift when HP goes down.
 void Gardien::fire (int angle_vertical) {
 
+	int vertical_angle_drift = (float)(rand()%(101 - lives) - (101 - lives)/2)/100 * 30;
+	int horizon_angle_drift = (float)(rand()%(101 - lives) - (101 - lives)/2)/100 * 50;
+
+	// cout<<"vetical_angle_drift = "<<vertical_angle_drift<<endl;
+	// cout<<"horizon_angle_drift = "<<horizon_angle_drift<<endl;
 	_guard_fire -> play ();
-	_fb -> init (_x, _y, 10., angle_vertical, -_angle);
+	_fb -> init (_x, _y, 10., angle_vertical + vertical_angle_drift, -_angle + 1 + horizon_angle_drift);
 }
 
 bool Gardien::see_chasseur () {

@@ -12,7 +12,11 @@ class Gardien : public Mover {
 private:
 
 	int id_of_gardien;
+
+	//By HUANG new: HP & puissance d'attaque
+	
 	int lives = 100;
+	float max_puissance_attaque = 15;
 
 	bool isDead = false;
 
@@ -32,7 +36,6 @@ private:
 	float distance_to_chasseur;												   // euclidean distance between gardien and hunter.
 	float angle_to_chasseur;												   // angle makes the gardien face to the hunter.
 	float max_view_distance = 20 * Environnement::scale;        			   // farthest distance that the gardien can see.
-	float max_puissance_attaque = 15;
 
 	bool move_aux (double dx, double dy);
 

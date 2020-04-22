@@ -63,10 +63,11 @@ bool Chasseur::process_fireball (float dx, float dy)
 			((Gardien *)(_l ->  _guards [i])) -> _guard_hit -> play (1. - dist2/dmax2);
 			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead())) {
 
+				//By HUANG new: puissance d'attaque augmente si la distance entre chasseur et gardien diminue.
+
 				((Gardien *)(_l ->  _guards [i])) -> hit(( 1 - (((Gardien *)(_l ->  _guards [i])) -> get_distance_to_chasseur())/1000) * puissance_attaque);
-				// cout<< ((Gardien *)(_l ->  _guards [i])) -> get_distance_to_chasseur()<<endl;
-				// cout<<dmax2<<endl;
-				// cout<<((Gardien *)(_l ->  _guards [i])) -> get_lives()<<endl;
+				message ("Good shoot.");
+
 				if (((Gardien *)(_l ->  _guards [i])) -> get_lives() <= 0) {
 					message ("Kill one.");
 					((Gardien *)(_l ->  _guards [i])) -> dead();
@@ -110,12 +111,17 @@ bool Chasseur::process_fireball (float dx, float dy)
  *	Tire sur un ennemi.
  */
 
+//By HUANG new: fire angle drift when HP goes down.
 void Chasseur::fire (int angle_vertical)
 {
 	message ("Woooshh...");
+
+	int vertical_angle_drift = (float)(rand()%(101 - lives) - (101 - lives)/2)/100 * 20;
+	int horizon_angle_drift = (float)(rand()%(101 - lives) - (101 - lives)/2)/100 * 30;
+
 	_hunter_fire -> play ();
 	_fb -> init (/* position initiale de la boule */ _x, _y, 10.,
-				 /* angles de vis�e */ angle_vertical, _angle);
+				 /* angles de vis�e */ angle_vertical + vertical_angle_drift, _angle + horizon_angle_drift);
 }
 
 

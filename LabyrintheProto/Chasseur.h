@@ -10,8 +10,10 @@ class Labyrinthe;
 class Chasseur : public Mover {
 private:
 
-	int lives = 100;                                   // hunter has 100 HP.
-	int puissance_attaque = 120;
+ //By HUANG new: HP & puissance d'attaque
+
+	int lives = 100;
+	int puissance_attaque = 110;
 
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);

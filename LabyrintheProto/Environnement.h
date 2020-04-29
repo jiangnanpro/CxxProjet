@@ -5,6 +5,7 @@
  *	Traduit un fichier de type d�finition de labyrinthe au format interne.
  */
 
+
 #define EMPTY	0		// case vide (ou on peut marcher!)
 
 extern void partie_terminee (bool win);
@@ -48,6 +49,8 @@ public:
 	Box		_treasor;	// le tr�sor.
 	Mover**	_guards;	// les gardes (tableau de pointeurs de gardiens).
 	int		_nguards;	// leur nombre.
+
+
 
 	virtual int width () =0;	// retourne la largeur du labyrinthe.
 	virtual int height () =0;	// retourne la longueur du labyrinthe.

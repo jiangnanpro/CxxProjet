@@ -1,16 +1,34 @@
 #ifndef LABYRINTHE_H
 #define LABYRINTHE_H
-
+#include <vector>
 #include "Environnement.h"
+
+#define INFINI 10000
+
+struct Teleportation
+{
+	int id = INFINI;
+	int pos_x1 = INFINI;
+	int pos_y1 = INFINI;
+	int pos_x2 = INFINI;
+	int pos_y2 = INFINI;
+};
 
 class Labyrinthe : public Environnement {
 private:
+
 	char	**_data;	// indique si la case est libre ou occup�e.
 	int		**_distance_to_tresor;
-	int   **_around_boxs;
+	int   	**_around_boxs;
+	int     **_over_tp;
 	int   	max_distance;   //153
 	int		lab_width;	// dimensions du rectangle.
 	int		lab_height;	// englobant le labyrinthe.
+	Teleportation * _teleportation;
+	int 	_nTP;
+
+
+
 
 public:
 	Labyrinthe (char*);
@@ -44,6 +62,13 @@ public:
 		_around_boxs [i][j] = 0;
 	}
 
+
+	int get_over_tp(int i, int j) {
+		return _over_tp[i][j];
+	}
+
+	int is_exist_in_teleprotation(int e);
+	double get_the_other_portal(int pos, int x, int y);
 };
 
 #endif

@@ -4,8 +4,11 @@
 #include <time.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cmath>
+#include <ctime>
 
 using namespace std;
+#define PI 3.14159265
 
 /*
  *	Tente un deplacement.
@@ -13,9 +16,48 @@ using namespace std;
 
 bool Chasseur::move_aux (double dx, double dy)
 {
-	//By HUANG new: eat Medical kit.
+	int pos_x = (int)(_x / Environnement::scale);
+	int pos_y = (int)(_y / Environnement::scale);
+	int pos_tp = 0;
 
-	if(((Labyrinthe *)(_l)) -> around_boxs((int)(_x / Environnement::scale),(int)(_y / Environnement::scale)) == 1)
+	int val_over_tp = ((Labyrinthe *)(_l)) -> get_over_tp(pos_x,pos_y);
+
+	cout << "pos " << val_over_tp << endl;    
+	if ( -1 !=  val_over_tp )
+	{
+		message("You have fund a secret, keep running at the same place");
+		_wait_to_transmision = _wait_to_transmision-1;
+		cout << "_wait_to_transmision" << _wait_to_transmision << endl;
+
+		if (_wait_to_transmision == 0)
+		{
+			_wait_to_transmision = 150;
+			pos_tp = ((Labyrinthe *)(_l)) -> is_exist_in_teleprotation(val_over_tp);
+			if (val_over_tp != INFINI)
+			{
+				double pos_portal_xy = ((Labyrinthe *)(_l)) -> get_the_other_portal(pos_tp, pos_x, pos_y);
+				// cout << "pos_x" << pos_x << endl;
+				// cout << "pos_y" << pos_y << endl;
+				int pos_portal_x = int(pos_portal_xy);
+				int pos_portal_y = (pos_portal_xy - (double)pos_portal_x)*10000;
+				// cout << "pos_portal_xy" << pos_portal_xy << endl;
+				// cout << "pos_portal_x:" << pos_portal_x << endl;
+				// cout << "pos_portal_y:" << pos_portal_y << endl;
+				_x = pos_portal_x * Environnement::scale;
+				_y = pos_portal_y * Environnement::scale;
+
+				message("You entered a new place");
+
+				return true;
+
+			}
+		}
+	} else {
+		message(" ");
+	}
+
+	//By HUANG new: eat Medical kit.
+	if(((Labyrinthe *)(_l)) -> around_boxs(pos_x,pos_y) == 1)
 	{
 		  if (lives >= 80) {
 				lives = 100;
@@ -23,11 +65,9 @@ bool Chasseur::move_aux (double dx, double dy)
 				lives += 20;
 			}
 
-			((Labyrinthe *)(_l)) -> set_around_boxs((int)(_x / Environnement::scale),(int)(_y / Environnement::scale));
+			((Labyrinthe *)(_l)) -> set_around_boxs(pos_x,pos_y);
 			message ("Get 20 hp! %d", (int) lives);
 	}
-
-
 	if (EMPTY == _l -> data ((int)((_x + dx) / Environnement::scale),
 							 (int)((_y + dy) / Environnement::scale)))
 	{
@@ -37,6 +77,14 @@ bool Chasseur::move_aux (double dx, double dy)
 	}
 	return false;
 }
+
+
+// void Chasseur::transmission() {
+// 	if ( -1 !=  ((Labyrinthe *)(_l)) -> get_over_tp((int)(_x / Environnement::scale),(int)(_y / Environnement::scale)) )
+// 	{
+// 		move(0, 10* Environnement::scale);
+// 	}
+// }
 
 /*
  *	Constructeur.
@@ -66,13 +114,19 @@ bool Chasseur::process_fireball (float dx, float dy)
 	// calculer la distance maximum en ligne droite.
 	float	dmax2 = (_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ());
 
+	int pos_of_fb_x = (int)((_fb -> get_x () + dx) / Environnement::scale) ;
+	int pos_of_fb_y = (int)((_fb -> get_y () + dy) / Environnement::scale);
+
+
 	// on bouge que dans le vide!
 	for (int i = 1; i < _l -> _nguards; ++i) {
-
+		int pos_of_guard_x = (int)((_l -> _guards [i] -> _x) / Environnement::scale ) ;
+		int pos_of_guard_y = (int)((_l -> _guards [i] -> _y) / Environnement::scale);
 
 		// tester la collision avec un gardient.
-		if ((int)((_fb -> get_x () + dx) / Environnement::scale) == (int)((_l -> _guards [i] -> _x) / Environnement::scale ) &&
-		(int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [i] -> _y) / Environnement::scale))
+		// if ((int)((_fb -> get_x () + dx) / Environnement::scale) == (int)((_l -> _guards [i] -> _x) / Environnement::scale ) &&
+		// (int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [i] -> _y) / Environnement::scale))
+		if( pos_of_guard_x ==  pos_of_fb_x && pos_of_guard_y==pos_of_fb_y)
 		{
 
 			((Gardien *)(_l ->  _guards [i])) -> _guard_hit -> play (1. - dist2/dmax2);
@@ -93,8 +147,24 @@ bool Chasseur::process_fireball (float dx, float dy)
 			return false;
 
 		}
+		//LIU 27/04
+		
+		if ( abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 10)
+		{
+			((Gardien*)(_l -> _guards[i])) -> change_to_mode_3();
+		}
+
+		if (abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 5)
+		{
+			srand((int) time(NULL));
+			float step_x = - 10*sin( ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);    // you can change the speed of dodging bullets
+			float step_y = 10 *cos(  ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);
+			
+			((Gardien *)(_l ->  _guards [i])) -> move(step_x, step_y);
+		}
+
 	}
-	// By HUANG
+	
 
 	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
 							 (int)((_fb -> get_y () + dy) / Environnement::scale)))

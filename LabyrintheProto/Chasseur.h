@@ -26,6 +26,8 @@ public:
 	static Sound*	_hunter_hit;	// cri du chasseur touch�.
 	static Sound*	_wall_hit;		// on a tap� un mur.
 
+	int _wait_to_transmision = 150;
+
 	Chasseur (Labyrinthe* l);
 	// ne bouger que dans une case vide (on 'glisse' le long des obstacles)
 	bool move (double dx, double dy) {
@@ -42,6 +44,8 @@ public:
 
 	void hit (int puissance) { lives -= puissance; }                      // if be hit lives - puissance_attaque.
 	int get_lives() { return lives; }
+
+	// void transmission();
 };
 
 #endif

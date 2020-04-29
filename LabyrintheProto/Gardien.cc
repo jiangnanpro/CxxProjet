@@ -28,6 +28,14 @@ bool Gardien::move_aux (double dx, double dy)
 	return false;
 }
 
+void Gardien::set_angle_to_chasseur() {
+	distance_to_chasseur_x = _x - _l -> _guards[0] -> _x;
+	distance_to_chasseur_y = _y - _l -> _guards[0] -> _y;
+	distance_to_chasseur = sqrt(pow(distance_to_chasseur_x,2) + pow(distance_to_chasseur_y,2));
+	angle_to_chasseur =  180 -  + atan2(distance_to_chasseur_x,distance_to_chasseur_y)*180 / PI;
+}
+
+
 void Gardien::update() {
 
 	if (!isDead) {                                       // if the gardien is dead, ignore it.
@@ -41,10 +49,7 @@ void Gardien::update() {
 		}
 		float step_x = - 0.3*sin(_angle * PI / 180);
 		float step_y = 0.3*cos(_angle * PI / 180);
-		distance_to_chasseur_x = _x - _l -> _guards[0] -> _x;
-		distance_to_chasseur_y = _y - _l -> _guards[0] -> _y;
-		distance_to_chasseur = sqrt(pow(distance_to_chasseur_x,2) + pow(distance_to_chasseur_y,2));
-		angle_to_chasseur =  180 - atan2(distance_to_chasseur_x,distance_to_chasseur_y)*180 / PI;
+		set_angle_to_chasseur();
 		// float	dmax = sqrt((_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ()))*Environnement::scale;
 
 		// if (isHit) {																													// if the gardien is hit by the hunter, it dies.
@@ -85,8 +90,8 @@ void Gardien::update() {
 				wait_for_fire -= 1;
 
 				_angle = angle_to_chasseur;                                             // set the angle face to hunter.
-		    step_x = - 0.5*sin(_angle * PI / 180);
-		    step_y = 0.5*cos(_angle * PI / 180);
+			    step_x = - 0.5*sin(_angle * PI / 180);
+			    step_y = 0.5*cos(_angle * PI / 180);
 
 				if (wait_for_fire == 0) {
 
@@ -168,7 +173,7 @@ bool Gardien::see_chasseur () {
 	}
 
 	float dx = - 10*sin(angle_to_chasseur * PI / 180);
-	float dy = 10*cos(angle_to_chasseur * PI / 180);
+	float dy =  10*cos(angle_to_chasseur * PI / 180);
 	float x_for_now = _x;
 	float y_for_now = _y;
 	while(true) {

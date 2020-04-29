@@ -78,6 +78,8 @@ public:
 	void update_defense(void);
 	void judge_mode(float step_x, float step_y);                                    //Judge and assign value to num_of_mode
 	void go_to_treasure();                                                          //The guard walks directly to the direction of the treasure to protect the treasure
+	void change_to_mode_3() { num_of_mode = 3;}
+	void set_angle_to_chasseur();
 };
 
 #endif

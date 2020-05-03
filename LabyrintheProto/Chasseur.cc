@@ -22,7 +22,7 @@ bool Chasseur::move_aux (double dx, double dy)
 
 	int val_over_tp = ((Labyrinthe *)(_l)) -> get_over_tp(pos_x,pos_y);
 
-	cout << "pos " << val_over_tp << endl;    
+	cout << "pos " << val_over_tp << endl;
 	if ( -1 !=  val_over_tp )
 	{
 		message("You have fund a secret, keep running at the same place");
@@ -33,13 +33,14 @@ bool Chasseur::move_aux (double dx, double dy)
 		{
 			_wait_to_transmision = 150;
 			pos_tp = ((Labyrinthe *)(_l)) -> is_exist_in_teleprotation(val_over_tp);
-			if (val_over_tp != INFINI)
+			if (pos_tp != INFINI)
 			{
-				double pos_portal_xy = ((Labyrinthe *)(_l)) -> get_the_other_portal(pos_tp, pos_x, pos_y);
+				std::pair<int,int> pos_portal_xy = ((Labyrinthe *)(_l)) -> get_the_other_portal(pos_tp, pos_x, pos_y);
+				//double pos_portal_xy = ((Labyrinthe *)(_l)) -> get_the_other_portal(pos_tp, pos_x, pos_y);
 				// cout << "pos_x" << pos_x << endl;
 				// cout << "pos_y" << pos_y << endl;
-				int pos_portal_x = int(pos_portal_xy);
-				int pos_portal_y = (pos_portal_xy - (double)pos_portal_x)*10000;
+				int pos_portal_x = (int)(pos_portal_xy.first);
+				int pos_portal_y = (int)(pos_portal_xy.second);
 				// cout << "pos_portal_xy" << pos_portal_xy << endl;
 				// cout << "pos_portal_x:" << pos_portal_x << endl;
 				// cout << "pos_portal_y:" << pos_portal_y << endl;
@@ -148,7 +149,7 @@ bool Chasseur::process_fireball (float dx, float dy)
 
 		}
 		//LIU 27/04
-		
+
 		if ( abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 10)
 		{
 			((Gardien*)(_l -> _guards[i])) -> change_to_mode_3();
@@ -159,12 +160,12 @@ bool Chasseur::process_fireball (float dx, float dy)
 			srand((int) time(NULL));
 			float step_x = - 10*sin( ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);    // you can change the speed of dodging bullets
 			float step_y = 10 *cos(  ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);
-			
+
 			((Gardien *)(_l ->  _guards [i])) -> move(step_x, step_y);
 		}
 
 	}
-	
+
 
 	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
 							 (int)((_fb -> get_y () + dy) / Environnement::scale)))

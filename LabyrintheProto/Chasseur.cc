@@ -127,7 +127,7 @@ bool Chasseur::process_fireball (float dx, float dy)
 		// tester la collision avec un gardient.
 		// if ((int)((_fb -> get_x () + dx) / Environnement::scale) == (int)((_l -> _guards [i] -> _x) / Environnement::scale ) &&
 		// (int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [i] -> _y) / Environnement::scale))
-		if( pos_of_guard_x ==  pos_of_fb_x && pos_of_guard_y==pos_of_fb_y)
+		if( pos_of_guard_x ==  pos_of_fb_x && pos_of_guard_y == pos_of_fb_y)
 		{
 
 			((Gardien *)(_l ->  _guards [i])) -> _guard_hit -> play (1. - dist2/dmax2);
@@ -152,18 +152,23 @@ bool Chasseur::process_fireball (float dx, float dy)
 
 		if ( abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 10)
 		{
-			((Gardien*)(_l -> _guards[i])) -> change_to_mode_3();
+			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead()))
+			{
+				((Gardien*)(_l -> _guards[i])) -> change_to_mode_3();
+			}
 		}
 
 		if (abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 5)
 		{
+			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead()))
+			{
 			srand((int) time(NULL));
 			float step_x = - 10*sin( ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);    // you can change the speed of dodging bullets
 			float step_y = 10 *cos(  ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);
 
 			((Gardien *)(_l ->  _guards [i])) -> move(step_x, step_y);
+			}
 		}
-
 	}
 
 

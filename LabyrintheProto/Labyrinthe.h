@@ -17,13 +17,13 @@ struct Teleportation
 class Labyrinthe : public Environnement {
 private:
 
-	char	**_data;	// indique si la case est libre ou occup�e.
+	char	**_data;	      // indique si la case est libre ou occupée.
 	int		**_distance_to_tresor;
-	int   	**_around_boxs;
-	int     **_over_tp;
-	int   	max_distance;   //153
-	int		lab_width;	// dimensions du rectangle.
-	int		lab_height;	// englobant le labyrinthe.
+	int   **_around_boxs;
+	int   **_over_tp;
+	int   max_distance;   // max distance in **_distance_to_tresor
+	int		lab_width;	    // dimensions du rectangle.
+	int		lab_height;	    // englobant le labyrinthe.
 	Teleportation * _teleportation;
 	int 	_nTP;
 
@@ -32,9 +32,9 @@ private:
 
 public:
 	Labyrinthe (char*);
-	int width () { return lab_width;}	// retourne la largeur du labyrinthe.
+	int width () { return lab_width;}	  // retourne la largeur du labyrinthe.
 	int height () { return lab_height;}	// retourne la longueur du labyrinthe.
-	// retourne l'�tat (occupation) de la case (i, j).
+	// retourne l'état (occupation) de la case (i, j).
 	int get_max_distance () {
 		return max_distance;
 	}

@@ -11,13 +11,13 @@ using namespace std;
 
 
 Sound*	Chasseur::_hunter_fire;	// bruit de l'arme du chasseur.
-Sound*	Chasseur::_hunter_hit;	// cri du chasseur touch�.
-Sound*	Chasseur::_wall_hit;	// on a tap� un mur.
+Sound*	Chasseur::_hunter_hit;	// cri du chasseur touché.
+Sound*	Chasseur::_wall_hit;	// on a tapé un mur.
 
 
 Sound*	Gardien::_guard_fire;	// bruit de l'arme du chasseur.
-Sound*	Gardien::_guard_hit;	// cri du chasseur touch�.
-Sound*	Gardien::_wall_hit;	// on a tap� un mur.
+Sound*	Gardien::_guard_hit;	// cri du chasseur touché.
+Sound*	Gardien::_wall_hit;	// on a tapé un mur.
 
 
 char** readLabyrinthe(char* filename);
@@ -100,7 +100,6 @@ Labyrinthe::Labyrinthe (char* filename)
 					findCornerY(fileData,i,j,column,lines,&nWall,murs,&nPoienture,peintures);
 					if (posY==0){}
 					else{ j = posY-1;}
-					// cout<<"pos:" <<i<<" "<<j<< " " << endl;
 				}
 				if (fileData[i][j] == 'X')
 				{
@@ -121,8 +120,6 @@ Labyrinthe::Labyrinthe (char* filename)
 					_treasor._x = i;
 					_treasor._y = j;
 					_distance_to_tresor [i][j] = 0;
-					//_data [_treasor._x][_treasor._y] = 1;
-					//_data [12][23] = 1;
 				}
 				if (fileData[i][j] == 'C')
 				{
@@ -339,7 +336,6 @@ void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, 
 			{
 				murs[n]->_x2 = i;
 				murs[n]->_y2 = column;
-				// cout << "mur:" << murs[n]->_x1<<" "<<murs[n]->_y1 <<" "<<i<<" "<<column<< endl;
 				break;
 			}
 			else if (data[i][column] == 'a')
@@ -491,11 +487,7 @@ void treat_teleportation(std::vector<Teleportation*> * pvt, int ele, int x, int 
 }
 
 std::pair<int,int> Labyrinthe::get_the_other_portal(int pos, int x, int y) {
-		// cout << "pos " << pos << endl;
-		// 	cout << "para x" << x << endl;
-		// 	cout << "para y" << y << endl;
-		// cout << "get x" << _teleportation[pos].pos_x2 << endl;
-		// cout << "get y" << _teleportation[pos].pos_y2 << endl;
+
 	if (_teleportation[pos].pos_x1 == x && _teleportation[pos].pos_y1 == y)
 	{
 

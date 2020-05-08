@@ -19,7 +19,7 @@ private:
 	void init (void);
 public:
 	Sound (const char*);				// charge un fichier de sons.
-	~Sound ();					// libère les échantillons.
+	~Sound ();					// libÃ¨re les Ã©chantillons.
 	void play (float volume =1., float pan =0.);	// le fait jouer.
 };
 #endif

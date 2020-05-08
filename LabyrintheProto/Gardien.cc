@@ -159,8 +159,6 @@ void Gardien::fire (int angle_vertical) {
 	int vertical_angle_drift = (float)(rand()%(101 - lives) - (101 - lives)/2)/100 * 30;
 	int horizon_angle_drift = (float)(rand()%(101 - lives) - (101 - lives)/2)/100 * 50;
 
-	// cout<<"vetical_angle_drift = "<<vertical_angle_drift<<endl;
-	// cout<<"horizon_angle_drift = "<<horizon_angle_drift<<endl;
 	_guard_fire -> play ();
 	_fb -> init (_x, _y, 10., angle_vertical + vertical_angle_drift, -_angle + 1 + horizon_angle_drift);
 }

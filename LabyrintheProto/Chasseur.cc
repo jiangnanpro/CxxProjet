@@ -36,14 +36,9 @@ bool Chasseur::move_aux (double dx, double dy)
 			if (pos_tp != INFINI)
 			{
 				std::pair<int,int> pos_portal_xy = ((Labyrinthe *)(_l)) -> get_the_other_portal(pos_tp, pos_x, pos_y);
-				//double pos_portal_xy = ((Labyrinthe *)(_l)) -> get_the_other_portal(pos_tp, pos_x, pos_y);
-				// cout << "pos_x" << pos_x << endl;
-				// cout << "pos_y" << pos_y << endl;
+
 				int pos_portal_x = (int)(pos_portal_xy.first);
 				int pos_portal_y = (int)(pos_portal_xy.second);
-				// cout << "pos_portal_xy" << pos_portal_xy << endl;
-				// cout << "pos_portal_x:" << pos_portal_x << endl;
-				// cout << "pos_portal_y:" << pos_portal_y << endl;
 				_x = pos_portal_x * Environnement::scale;
 				_y = pos_portal_y * Environnement::scale;
 
@@ -79,14 +74,6 @@ bool Chasseur::move_aux (double dx, double dy)
 	return false;
 }
 
-
-// void Chasseur::transmission() {
-// 	if ( -1 !=  ((Labyrinthe *)(_l)) -> get_over_tp((int)(_x / Environnement::scale),(int)(_y / Environnement::scale)) )
-// 	{
-// 		move(0, 10* Environnement::scale);
-// 	}
-// }
-
 /*
  *	Constructeur.
  */
@@ -100,7 +87,7 @@ Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
 }
 
 /*
- *	Fait bouger la boule de feu (ceci est une exemple, � vous de traiter les collisions sp�cifiques...)
+ *	Fait bouger la boule de feu (ceci est une exemple, à vous de traiter les collisions spécifiques...)
  */
 
 bool Chasseur::process_fireball (float dx, float dy)
@@ -186,8 +173,8 @@ bool Chasseur::process_fireball (float dx, float dy)
 	_wall_hit -> play (1. - dist2/dmax2);
 	message ("Booom...");
 
-	// teste si on a touch� le tr�sor: juste pour montrer un exemple de la
-	// fonction � partie_terminee �.
+	// teste si on a touché le trésor: juste pour montrer un exemple de la
+	// fonction < partie_terminee >.
 	if ((int)((_fb -> get_x () + dx) / Environnement::scale) == _l -> _treasor._x &&
 		(int)((_fb -> get_y () + dy) / Environnement::scale) == _l -> _treasor._y)
 	{
@@ -212,15 +199,15 @@ void Chasseur::fire (int angle_vertical)
 
 	_hunter_fire -> play ();
 	_fb -> init (/* position initiale de la boule */ _x, _y, 10.,
-				 /* angles de vis�e */ angle_vertical + vertical_angle_drift, _angle + horizon_angle_drift);
+				 /* angles de visée */ angle_vertical + vertical_angle_drift, _angle + horizon_angle_drift);
 }
 
 
 /*
- *	Clic droit: par d�faut fait tomber le premier gardien.
+ *	Clic droit: par défaut fait tomber le premier gardien.
  *
  *	Inutile dans le vrai jeu, mais c'est juste pour montrer
- *	une utilisation des fonctions � tomber � et � rester_au_sol �
+ *	une utilisation des fonctions < tomber > et < rester_au_sol >
  */
 
 
@@ -249,4 +236,3 @@ void Chasseur::fire (int angle_vertical)
  		_y = y_tele * Environnement::scale;
  	}
  }
- // By HUANG

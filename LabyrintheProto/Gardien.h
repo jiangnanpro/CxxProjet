@@ -13,8 +13,7 @@ private:
 
 	int id_of_gardien;
 
-	//By HUANG new: HP & puissance d'attaque
-	
+	//By HUANG
 	int lives = 100;
 	float max_puissance_attaque = 15;
 
@@ -22,11 +21,10 @@ private:
 
 	bool fix_angle = false;													  // if the gardien doesn't meet an obstacle then fix the moving angle.
 	int wait_for_fire = 50;													  // once fired, waiting for 50 loops for the next fire.
-	int num_of_mode = 0;													  // mode of gardien: 0 for patrouille, 1 for going to tresor to protect it, 2 for running quicklier to tresor, 3 for attaque.
+	int num_of_mode = 0;													    // mode of gardien: 0 for patrouille, 1 for going to tresor to protect it, 2 for running quicklier to tresor, 3 for attaque.
 	int num_of_ex_mode = 0;													  // stock the ex-mode of gardien.
 	float times_of_spead = 0.5;
-	float defense = 0.;														  // defense value of gardien,
-	// float defense_threshold = 8.;		replaced						  // *** here I set it 8, but maybe this threshold should be changed automatically... ***
+	float defense = 0.;														    // defense value of gardien,
 
 	float threat_level_move = 6.;
 	float threat_level_move_fast = 8.;
@@ -34,7 +32,7 @@ private:
 	float distance_to_chasseur_x;											   // horizontal distance between gardien and hunter.
 	float distance_to_chasseur_y;											   // vertical distance between gardien and hunter.
 	float distance_to_chasseur;												   // euclidean distance between gardien and hunter.
-	float angle_to_chasseur;												   // angle makes the gardien face to the hunter.
+	float angle_to_chasseur;												     // angle makes the gardien face to the hunter.
 	float max_view_distance = 20 * Environnement::scale;        			   // farthest distance that the gardien can see.
 
 	bool move_aux (double dx, double dy);
@@ -42,8 +40,8 @@ private:
 public:
 
 	static Sound*	_guard_fire;												// bruit de l'arme du gardien.
-	static Sound*	_guard_hit;													// cri du gardien touch�.
-	static Sound*	_wall_hit;													// on a tap� un mur.
+	static Sound*	_guard_hit;													// cri du gardien touché.
+	static Sound*	_wall_hit;													// on a tapé un mur.
 
 	Gardien (Labyrinthe* l, const char* modele, int id) : Mover (120, 80, l, modele)
 	{
@@ -54,7 +52,7 @@ public:
 			_wall_hit = new Sound ("sons/hit_wall.wav");
 	}
 
-	// mon gardien pense tr�s mal!
+	// mon gardien pense très mal!
 	void update (void);
 	// et ne bouge pas!
 	bool move (double dx, double dy) {

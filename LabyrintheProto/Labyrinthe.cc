@@ -25,7 +25,7 @@ int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, i
 void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, int* nWall, std::vector<Wall*>& murs,int* nPoienture, std::vector<Wall*>& peintures);
 int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab_height, int treasor_x, int treasor_y);
 void printTport(struct Teleportation t);
-void treat_teleportation(std::vector<Teleportation*> * pvt, int ele , int x, int y, int *pnTP); 
+void treat_teleportation(std::vector<Teleportation*> * pvt, int ele , int x, int y, int *pnTP);
 int is_exist(std::vector<Teleportation*> vt, int e);
 
 
@@ -181,6 +181,7 @@ Labyrinthe::Labyrinthe (char* filename)
 		_walls[i]._ntex = 0;
 
 	}
+
   // two types of texture.
 	char voiture[128];
 	char affiche[128];
@@ -217,7 +218,7 @@ Labyrinthe::Labyrinthe (char* filename)
 	 _guards[0] = new Chasseur (this);
 	 _guards[0]->_x = c->_x;
 	 _guards[0]->_y = c->_y;
-	 
+
 	for (int i = 1; i < _nguards; ++i)
 	{
 		// By HUANG
@@ -371,7 +372,7 @@ int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab
 
 	int all_fill = 1;
 	int count_case = 0;
-  int max_distance = 0;
+  	int max_distance = 0;
 
 	if (_data[treasor_x+1][treasor_y] == 0 && _distance_to_tresor[treasor_x+1][treasor_y] == INFINI) { _distance_to_tresor[treasor_x+1][treasor_y] = _distance_to_tresor[treasor_x][treasor_y]+1; }
 	if (_data[treasor_x-1][treasor_y] == 0 && _distance_to_tresor[treasor_x-1][treasor_y] == INFINI) { _distance_to_tresor[treasor_x-1][treasor_y] = _distance_to_tresor[treasor_x][treasor_y]+1; }
@@ -439,9 +440,9 @@ void printTport(struct Teleportation t)
 int is_exist(std::vector<Teleportation*> vt, int e) {
 	int i=0;
 	int pos=INFINI;
-	for(std::vector<Teleportation*>::iterator it = vt.begin(); it != vt.end(); ++it){ 
+	for(std::vector<Teleportation*>::iterator it = vt.begin(); it != vt.end(); ++it){
 		// printTport (*(*it));
-		
+
 		if (((*it)->id) == e)
 		{
 			// cout << "yi jing cun zai " << ((*it)->id) << endl;
@@ -456,9 +457,9 @@ int is_exist(std::vector<Teleportation*> vt, int e) {
 int Labyrinthe::is_exist_in_teleprotation(int e) {
 	int j=0;
 	int pos=INFINI;
-	for(int i=0; i<_nTP; i++){ 
+	for(int i=0; i<_nTP; i++){
 		// printTport (*(*it));
-		
+
 		if ( _teleportation[i].id == e)
 		{
 			pos = j;
@@ -474,7 +475,7 @@ void treat_teleportation(std::vector<Teleportation*> * pvt, int ele, int x, int 
 	if (INFINI == pos)
 	{
 		// cout << "pnTP " << pnTP << endl;
-		(*pvt).push_back(new Teleportation());		
+		(*pvt).push_back(new Teleportation());
 		(*pvt)[*pnTP] -> id = ele ;
 		(*pvt)[*pnTP] -> pos_x1 = x;
 		(*pvt)[*pnTP] -> pos_y1 = y;
@@ -486,10 +487,10 @@ void treat_teleportation(std::vector<Teleportation*> * pvt, int ele, int x, int 
 		(*pvt)[pos] -> pos_y2 = y;
 	}
 
-	
+
 }
 
-double Labyrinthe::get_the_other_portal(int pos, int x, int y) {
+std::pair<int,int> Labyrinthe::get_the_other_portal(int pos, int x, int y) {
 		// cout << "pos " << pos << endl;
 		// 	cout << "para x" << x << endl;
 		// 	cout << "para y" << y << endl;
@@ -498,12 +499,12 @@ double Labyrinthe::get_the_other_portal(int pos, int x, int y) {
 	if (_teleportation[pos].pos_x1 == x && _teleportation[pos].pos_y1 == y)
 	{
 
-		return _teleportation[pos].pos_x2 + (_teleportation[pos].pos_y2)*0.0001;
+		return make_pair(_teleportation[pos].pos_x2, _teleportation[pos].pos_y2);
 	} else if (_teleportation[pos].pos_x2 == x && _teleportation[pos].pos_y2 == y)
 	{
-		return _teleportation[pos].pos_x1 + (_teleportation[pos].pos_y1)*0.0001;
+		return make_pair(_teleportation[pos].pos_x1, _teleportation[pos].pos_y1);
 	}
-	else return INFINI;
+	else return make_pair(INFINI,INFINI);
 }
 
 //LIU 28/04

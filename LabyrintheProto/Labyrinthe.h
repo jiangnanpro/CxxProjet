@@ -68,7 +68,7 @@ public:
 	}
 
 	int is_exist_in_teleprotation(int e);
-	double get_the_other_portal(int pos, int x, int y);
+	std::pair<int,int> get_the_other_portal(int pos, int x, int y);
 };
 
 #endif

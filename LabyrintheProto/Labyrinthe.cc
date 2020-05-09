@@ -9,6 +9,24 @@
 using namespace std;
 #define INFINI 10000
 
+/**
+ * This file contains all the functions of identifying .txt files and drawing a labyrinth. Because many functions are only used when drawing the labyrinth, they are not reusable. 
+ * So they are not member functions of the class.
+ * Steps of constructing the labyrinth:
+ * 
+ * 1. Call the function readLabyrinth() to read the file content. Get a two-dimensional array and assign it to a two-dimensional array _data
+ * 2. Initialize four two-dimensional arrays.
+ * 3. Traverse the two-dimensional array _data. 
+ * 	  If the character encountered is ‘+’, it means the beginning or end of a wall.Call the function findCornerX, findCornerY to judge. If it is the starting point, 
+ * 	  get the return value of findDornerX (), namely: the position of the end point of the wall. Continue traversal from this position. 
+ *	  The middle ‘-’ will no longer be processed. The processing of the characters ‘a’ and ‘b’ is inside the functions findCornerX and findCornerY.
+ * 4. Traverse the two-dimensional array _data. If the character encountered is ‘x’, it means a box. Handle the _distance_to_treasure around the box
+ * 5. Traverse the two-dimensional array _data, if the character encountered is ‘T, it means treasure, _distance_to_treasure is set to 0
+ * 6. Traverse the two-dimensional array _data. If the character encountered is a number, it means teleportation. Because the number is the teleportation id, 
+ * 	  check whether this group of teleportation already exists. See the description of the function treat_teleportation () for details.
+ * 7. Calculate the distance from all points to the treasure, see the function fillDistance () for details
+ */
+
 
 Sound*	Chasseur::_hunter_fire;	// bruit de l'arme du chasseur.
 Sound*	Chasseur::_hunter_hit;	// cri du chasseur touché.
@@ -34,10 +52,13 @@ Environnement* Environnement::init (char* filename)
 	return new Labyrinthe (filename);
 }
 
-/*
- *	EXEMPLE de labyrinthe.
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Draw a map
+ * @DateTime    2020-05-08T16:47:46+0100
+ * @param		file name
+ * @return
  */
-
 Labyrinthe::Labyrinthe (char* filename)
 {
 	cout << filename << endl;
@@ -96,8 +117,8 @@ Labyrinthe::Labyrinthe (char* filename)
 				}
 				if (fileData[i][j] == '+')
 				{
-					int posY = findCornerX(fileData, i, j, column,lines,&nWall, murs,&nPoienture,peintures);
-					findCornerY(fileData,i,j,column,lines,&nWall,murs,&nPoienture,peintures);
+					int posY = findCornerX(fileData, i, j, column,lines,&nWall, murs,&nPoienture,peintures); //Determine whether the point is the start or end of the wall in x vertical
+					findCornerY(fileData,i,j,column,lines,&nWall,murs,&nPoienture,peintures); 				 //Determine whether the point is the start or end of the wall in y vertical
 					if (posY==0){}
 					else{ j = posY-1;}
 				}
@@ -114,7 +135,7 @@ Labyrinthe::Labyrinthe (char* filename)
 					_around_boxs[i][j-1] = 1;
 				}
 
-				// By HUANG
+				
 				if (fileData[i][j] == 'T')
 				{
 					_treasor._x = i;
@@ -138,7 +159,7 @@ Labyrinthe::Labyrinthe (char* filename)
 
 				if (isdigit(fileData[i][j]))
 				{
-					// cout << fileData[i][j] << endl;
+					
 					_data[i][j] = 0;
 					_over_tp[i][j] = (int)(fileData[i][j]-'0');
 					treat_teleportation(&teleportation, (int)(fileData[i][j]-'0'), i, j, &nTP);
@@ -163,7 +184,7 @@ Labyrinthe::Labyrinthe (char* filename)
 	}
 
 	set_max_distance(fillDistance(_data, _distance_to_tresor, lab_width, lab_height, _treasor._x, _treasor._y));
-	// By HUANG
+	
 
 	// taille du labyrinthe.
 
@@ -205,7 +226,7 @@ Labyrinthe::Labyrinthe (char* filename)
 		_boxes[i]._x = boites[i]->_x ;
 		_boxes[i]._y = boites[i]->_y ;
 		_boxes[i]._ntex = 0;
-		//_data[_boxes[i]._x][_boxes[i]._y] = 1;
+		
 	}
 
 	// le chasseur et les gardiens
@@ -218,19 +239,13 @@ Labyrinthe::Labyrinthe (char* filename)
 
 	for (int i = 1; i < _nguards; ++i)
 	{
-		// By HUANG
 		if (i % 2 == 0 && i % 4 != 0) {_guards[i] = new Gardien (this, "drfreak",i-1); }
 		if (i % 2 == 0 && i % 4 == 0) {_guards[i] = new Gardien (this, "garde",i-1); }
 		if (i % 2 != 0 && (i+1) % 4 != 0) {_guards[i] = new Gardien (this, "Marvin",i-1); }
 		if (i % 2 != 0 && (i+1) % 4 == 0) {_guards[i] = new Gardien (this, "Potator",i-1); }
-		// By HUANG
 		_guards[i]->_x = g[i-1]->_x;
 		_guards[i]->_y = g[i-1]->_y;
 
-		// cout<<"x = "<<_guards[i]->_x <<endl;
-		// cout<<"y = "<<_guards[i]->_y <<endl<<endl;
-		// datat
-		//_data [(int)(_guards[i+1]->_x / scale)][(int)(_guards[i+1]->_y / scale)] = 1;
 	}
 
 	cout<<"scale:"<< scale << endl;
@@ -239,22 +254,21 @@ Labyrinthe::Labyrinthe (char* filename)
 	cout<<"dist:"<< _distance_to_tresor[dis_chasseur_x][dis_chasseur_y] << endl;
 	cout << "map loaded............." << endl;
 
-	//dispaly the map
-	// for (int i = 0; i < lab_width; ++i)
-	// {
-	// 	for (int j = 0; j < lab_height; ++j)
-	// 	{
-	// 		cout << setw(5) << _over_tp[i][j] ;
-	// 	}
-	// 	cout << endl;
-	// }
 }
 
 
 
 
 
-
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Read the file passed in by the parameter. 
+ 				Store the contents of the file in a two-dimensional array
+ * @DateTime    2020-05-08T16:49:15+0100
+ * @param		file name 
+ * @invocation  Called by Labyrinth
+ * @return		A two-dimensional array which stores contents of the input file
+ */
 char** readLabyrinthe(char* filename) {
 	char** data = new char* [100];
 	for (int i = 0; i < 100; ++i)
@@ -274,9 +288,19 @@ char** readLabyrinthe(char* filename) {
 	return data;
 }
 
+
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Determine whether the point is the start or end of the wall. 
+ * 				If it is the starting point, find the end point along the x direction.
+ * 				At the same time treat the texture 'a' and 'b'
+ * @DateTime    2020-05-08T16:52:27+0100
+ * @invocation  Called by Labyrinth
+ * @return		Return the positon the end of the wall.
+ */
 int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, int* nWall, std::vector<Wall*>& murs, int* nPoienture, std::vector<Wall*>& peintures){
 	int n = *nWall;
-
+	//So, if we judge that the right side of ’+’ is ’-’ or ’+’, it means thatthe current point is the starting point,
 	if (data[lines][column+1] == '-' || data[lines][column+1] == '+')
 	{
 		murs.push_back(new Wall());
@@ -284,19 +308,19 @@ int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, i
 		murs[n]->_y1 = column;
 		murs[n]->_ntex = 0;
 		(*nWall)++;
-
+		//we look to the right for the end of the wall
 		for (int j = column+1; j < nbColume; ++j)
-		{
+		{	// we find the end of the wall
 			if (data[lines][j] == '+')
 				{
-					// cout<<lines<<" "<< j<<" "<< data[lines][j] << endl;
 					murs[n]->_x2 = lines;
 					murs[n]->_y2 = j;
-					// cout << "mur:" << murs[n]->_x1<<" "<<murs[n]->_y1<<" " <<lines<<" "<<j<< endl;
 					return j;
 				}
+			// if the wall is in texture 'a'
 			else if (data[lines][j] == 'a')
 			{
+				
 				peintures.push_back(new Wall());
 				peintures[*nPoienture]->_x1 = lines;
 				peintures[*nPoienture]->_y1 = j;
@@ -305,6 +329,7 @@ int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, i
 				peintures[*nPoienture]->_ntex = 1;
 				(*nPoienture)++;
 			}
+			// if the wall is in texture 'b'
 			else if (data[lines][j] == 'b')
 			{
 				peintures.push_back(new Wall());
@@ -320,6 +345,15 @@ int findCornerX(char** data, int lines, int column, int nbColume, int nbLines, i
 	return 0;
 }
 
+
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Determine whether the point is the start or end of the wall. 
+ * 				If it is the starting point, find the end point along the y direction.
+ * 				At the same time treat the texture 'a' and 'b'
+ * @DateTime    2020-05-08T16:52:27+0100
+ * @invocation  Called by Labyrinth
+ */
 void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, int* nWall, std::vector<Wall*>& murs, int* nPoienture, std::vector<Wall*>& peintures) {
 	int n = *nWall;
 	if (data[lines+1][column] == '|' || data[lines+1][column] == '+')
@@ -363,12 +397,18 @@ void findCornerY(char** data, int lines, int column, int nbColume, int nbLines, 
 
 }
 
-// By HUANG
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Calculate the distance of each grid to treasure until all grids are calculated. 
+ * @DateTime    2020-05-08T17:03:09+0100
+ * @invocation  Called by Labyrinth
+ * @Return  	the maximun distance to treasure in the labyrith
+ */
 int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab_height, int treasor_x, int treasor_y) {
 
 	int all_fill = 1;
 	int count_case = 0;
-  int max_distance = 0;
+  	int max_distance = 0;
 
 	if (_data[treasor_x+1][treasor_y] == 0 && _distance_to_tresor[treasor_x+1][treasor_y] == INFINI) { _distance_to_tresor[treasor_x+1][treasor_y] = _distance_to_tresor[treasor_x][treasor_y]+1; }
 	if (_data[treasor_x-1][treasor_y] == 0 && _distance_to_tresor[treasor_x-1][treasor_y] == INFINI) { _distance_to_tresor[treasor_x-1][treasor_y] = _distance_to_tresor[treasor_x][treasor_y]+1; }
@@ -406,24 +446,16 @@ int fillDistance(char** _data, int** _distance_to_tresor, int lab_width, int lab
 		count_case = new_count;
 	}
 
-	// print and check the matirx.
-
-	// for (int i = 0; i < lab_width; ++i)
-	// {
-	// 	for (int j = 0; j < lab_height; ++j)
-	// 	{
-	// 		cout<<_distance_to_tresor[i][j]<<" ";
-	// 	}
-	// 	cout<<endl;
-	// }
-
-
 	return max_distance;
 }
 
-//LIU 28/04
 
 
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description	Print id, coordinates of a pair of portals.
+ * @DateTime    2020-05-08T17:08:53+0100
+ */
 void printTport(struct Teleportation t)
 {
 	cout << "id : " << t.id << endl;
@@ -433,15 +465,25 @@ void printTport(struct Teleportation t)
 	cout << "pos_y2 : " << t.pos_y2 << endl;
 }
 
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Determine if a teleportation whose id is e already exists. 
+ * @DateTime    2020-05-08T18:21:24+0100
+ * @param  		vt: array _teleportation
+ * @param 		e:  id of a teleportation
+ * @Return 		If the teleportation whose id is e exists, return the position in the array _teleportation.
+ * 				If not, return INFINI
+ * @invocation  invocated in function void treat_teleportation()
+ */
 int is_exist(std::vector<Teleportation*> vt, int e) {
 	int i=0;
 	int pos=INFINI;
 	for(std::vector<Teleportation*>::iterator it = vt.begin(); it != vt.end(); ++it){
-		// printTport (*(*it));
+
 
 		if (((*it)->id) == e)
 		{
-			// cout << "yi jing cun zai " << ((*it)->id) << endl;
+;
 			pos = i;
 			return pos;
 		}
@@ -449,13 +491,20 @@ int is_exist(std::vector<Teleportation*> vt, int e) {
 	}
 	return pos;
 }
-
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Determine if a teleportation whose id is e already exists. 
+ * @DateTime    2020-05-08T18:21:24+0100
+ * @param  		vt: array _teleportation
+ * @param 		e:  id of a teleportation
+ * @Return 		If the teleportation whose id is e exists, return the position in the array _teleportation.
+ * 				If not, return INFINI
+ * @invocation  invocated in function bool Chasseur::move_aux (double dx, double dy) in file: Chasseur.cc
+ */
 int Labyrinthe::is_exist_in_teleprotation(int e) {
 	int j=0;
 	int pos=INFINI;
 	for(int i=0; i<_nTP; i++){
-		// printTport (*(*it));
-
 		if ( _teleportation[i].id == e)
 		{
 			pos = j;
@@ -466,6 +515,14 @@ int Labyrinthe::is_exist_in_teleprotation(int e) {
 	return pos;
 }
 
+
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Check whether the portal of the id already exists,if it does not exist,  
+ * 				then “new” a Teleportation,  and assign values to posx1,posy1.If it does not exist, 
+ * 				find the teleportation with the same id and assignvalues to posx2, posy2
+ * @DateTime    2020-05-08T18:29:39+0100
+ */
 void treat_teleportation(std::vector<Teleportation*> * pvt, int ele, int x, int y, int *pnTP) {
 	int pos = is_exist(*pvt, ele);
 	if (INFINI == pos)
@@ -486,6 +543,12 @@ void treat_teleportation(std::vector<Teleportation*> * pvt, int ele, int x, int 
 
 }
 
+
+/**
+ * 		Get the coordinate of the other portal.
+ *  @param  x: The x coordinate of a portal
+ *  @param  y: The y coordinate of a portal
+ */
 std::pair<int,int> Labyrinthe::get_the_other_portal(int pos, int x, int y) {
 
 	if (_teleportation[pos].pos_x1 == x && _teleportation[pos].pos_y1 == y)
@@ -499,4 +562,4 @@ std::pair<int,int> Labyrinthe::get_the_other_portal(int pos, int x, int y) {
 	else return make_pair(INFINI,INFINI);
 }
 
-//LIU 28/04
+

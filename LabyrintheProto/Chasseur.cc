@@ -10,10 +10,49 @@
 using namespace std;
 #define PI 3.14159265
 
-/*
- *	Tente un deplacement.
- */
+/**
+ * This file contians functions about hunters. These functions is responsible for 
+ * how the hunter walks, how he fires and how the fireball flies in diffrent situations.
+ * 
+ * The system will automatically call all functions in this file,
+ * so that the state of the hunter and fireball will be processed at every moment.
+ * 
+ * bool Chasseur::move_aux (double dx, double dy):
+ * 
+ * 		This function completes a movement of Hunter. 
+ * 		
+ * 		If hunter walks over a grid where the portal is located, there will be a message 
+ * 		displayed in the upper left corner. And he can completes teleportation after 
+ * 		keeping running sur the portals.
+ * 		
+ * 		If hunter walks over a grid where there is a medical kit aroud box, then he will 
+ * 		get 20 hp.
+ *
+ * bool Chasseur::process_fireball (float dx, float dy):
+ *		This function handles the different situations of the fireball during the flight. 
+ *		
+ *		If there is nothing in the direction of the flight of fireball, it keeps flying.
+ *		If fireball hits a guardian, the HP value of guardian will decreases. Puissance of
+ *		fireball increases as distance between hunter and guardian increases.
+ *		If fireball missed guardian, but the distance between fireball and guardian is 
+ *		less than dis1, then guardian will move to the direction where fireball comes from. 
+ *		When the fireball is going to hit the guard, the guard will dodge randomly in a short distance.
+ *
+ * void Chasseur::fire (int angle_vertical)
+ * 		Initialize the angle of the fireball
+ * 		Hunter fires, but fire angle drift when HP goes down.
+**/
 
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Completing a movement of Hunter. 
+ * 				If there is a portals, hunter will complete teleportation after running sur place for a period of time.
+ * 				If the grid is aroud a box, then HP value of hunter augments
+ * @DateTime    2020-05-08T15:25:15+0100
+ * @param		dx: distance that hunter moves in x direction
+ * @param		dy: distance that hunter moves in x direction
+ * @return		bool: if hunter moving in direction dx,dy successfully
+ */
 bool Chasseur::move_aux (double dx, double dy)
 {
 	int pos_x = (int)(_x / Environnement::scale);
@@ -22,7 +61,7 @@ bool Chasseur::move_aux (double dx, double dy)
 
 	int val_over_tp = ((Labyrinthe *)(_l)) -> get_over_tp(pos_x,pos_y);
 
-	cout << "pos " << val_over_tp << endl;
+	// Teleportation
 	if ( -1 !=  val_over_tp )
 	{
 		message("You have fund a secret, keep running at the same place");
@@ -52,7 +91,7 @@ bool Chasseur::move_aux (double dx, double dy)
 		message(" ");
 	}
 
-	//By HUANG new: eat Medical kit.
+	//Eat Medical kit.
 	if(((Labyrinthe *)(_l)) -> around_boxs(pos_x,pos_y) == 1)
 	{
 		  if (lives >= 80) {
@@ -86,10 +125,13 @@ Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
 		_wall_hit = new Sound ("sons/hit_wall.wav");
 }
 
-/*
- *	Fait bouger la boule de feu (ceci est une exemple, à vous de traiter les collisions spécifiques...)
- */
 
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description This fuction  handles the different situations of the fireball during the flight:
+ * 				fireball hits guardian, hits walls, hits treasure or misses guardian or there is noting.
+ * @DateTime    2020-05-08T15:44:34+0100
+ */
 bool Chasseur::process_fireball (float dx, float dy)
 {
 
@@ -98,7 +140,6 @@ bool Chasseur::process_fireball (float dx, float dy)
 	float	y = (_y - _fb -> get_y ()) / Environnement::scale;
 	float	dist2 = x*x + y*y;
 
-	// By HUANG
 	// calculer la distance maximum en ligne droite.
 	float	dmax2 = (_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ());
 
@@ -112,15 +153,13 @@ bool Chasseur::process_fireball (float dx, float dy)
 		int pos_of_guard_y = (int)((_l -> _guards [i] -> _y) / Environnement::scale);
 
 		// tester la collision avec un gardient.
-		// if ((int)((_fb -> get_x () + dx) / Environnement::scale) == (int)((_l -> _guards [i] -> _x) / Environnement::scale ) &&
-		// (int)((_fb -> get_y () + dy) / Environnement::scale) == (int)((_l -> _guards [i] -> _y) / Environnement::scale))
 		if( pos_of_guard_x ==  pos_of_fb_x && pos_of_guard_y == pos_of_fb_y)
 		{
 
 			((Gardien *)(_l ->  _guards [i])) -> _guard_hit -> play (1. - dist2/dmax2);
 			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead())) {
 
-				//By HUANG new: puissance d'attaque augmente si la distance entre chasseur et gardien diminue.
+				//Puissance d'attaque augmente si la distance entre chasseur et gardien diminue.
 
 				((Gardien *)(_l ->  _guards [i])) -> hit(( 1 - (((Gardien *)(_l ->  _guards [i])) -> get_distance_to_chasseur())/1000) * puissance_attaque);
 				message ("Good shoot.");
@@ -135,7 +174,8 @@ bool Chasseur::process_fireball (float dx, float dy)
 			return false;
 
 		}
-		//LIU 27/04
+		//If distance of fireball and guardian <= 10, then guardian will notice this attack. 
+		//And then he will forwards to the direction where the attack comes from, even if he does't see hunter.
 
 		if ( abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 10)
 		{
@@ -145,13 +185,14 @@ bool Chasseur::process_fireball (float dx, float dy)
 			}
 		}
 
+		// If distance of fireball and guardian <= 5, then he will randomly dodge in acertain direction in a small step.
 		if (abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 5)
 		{
 			if (!(((Gardien *)(_l ->  _guards [i])) -> is_dead()))
 			{
 			srand((int) time(NULL));
-			float step_x = - 10*sin( ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);    // you can change the speed of dodging bullets
-			float step_y = 10 *cos(  ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);
+			float step_x = - 5*sin( ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);    // you can change the speed of dodging bullets
+			float step_y = 5 *cos(  ( ((Gardien*)(_l -> _guards[i])) -> _angle+ (rand() % 361) ) * PI / 180);
 
 			((Gardien *)(_l ->  _guards [i])) -> move(step_x, step_y);
 			}
@@ -180,16 +221,15 @@ bool Chasseur::process_fireball (float dx, float dy)
 	{
 		partie_terminee (true);
 	}
-
-
 	return false;
 }
 
-/*
- *	Tire sur un ennemi.
- */
 
-//By HUANG new: fire angle drift when HP goes down.
+/**
+ * @Author      JiaxuanLIU and JiangnanHUANG
+ * @Description Initialize the angle of the fireball
+ * 				Hunter fires, but fire angle drift when HP goes down.
+ */
 void Chasseur::fire (int angle_vertical)
 {
 	message ("Woooshh...");
@@ -203,36 +243,33 @@ void Chasseur::fire (int angle_vertical)
 }
 
 
-/*
- *	Clic droit: par défaut fait tomber le premier gardien.
- *
- *	Inutile dans le vrai jeu, mais c'est juste pour montrer
- *	une utilisation des fonctions < tomber > et < rester_au_sol >
- */
+// /*
+//  *	Clic droit: par défaut fait tomber le premier gardien.
+//  *
+//  *	Inutile dans le vrai jeu, mais c'est juste pour montrer
+//  *	une utilisation des fonctions < tomber > et < rester_au_sol >
+//  */
+//  void Chasseur::right_click (bool shift, bool control) {                       // this funtion doesn't work! it's fake
 
+//  	if (shift) {
+//  		cout<<"hahaha"<<endl;
+//  	} else {
 
-// By HUANG
- void Chasseur::right_click (bool shift, bool control) {                       // this funtion doesn't work! it's fake
+//  		int x_tele = 0;
+//  		int y_tele = 0;
 
- 	if (shift) {
- 		cout<<"hahaha"<<endl;
- 	} else {
+//  		while (true) {
 
- 		int x_tele = 0;
- 		int y_tele = 0;
+//  			srand((unsigned int)(time(NULL)));
+//  			x_tele = rand()%(_l -> width ());
+//  			y_tele = rand()%(_l -> height ());
 
- 		while (true) {
+//  			if (EMPTY == _l -> data (x_tele, y_tele) && ((Labyrinthe *)(_l)) -> distance_to_tresor (x_tele, y_tele) > 20) {
+//  				break;
+//  			}
+//  		}
 
- 			srand((unsigned int)(time(NULL)));
- 			x_tele = rand()%(_l -> width ());
- 			y_tele = rand()%(_l -> height ());
-
- 			if (EMPTY == _l -> data (x_tele, y_tele) && ((Labyrinthe *)(_l)) -> distance_to_tresor (x_tele, y_tele) > 20) {
- 				break;
- 			}
- 		}
-
- 		_x = x_tele * Environnement::scale;
- 		_y = y_tele * Environnement::scale;
- 	}
- }
+//  		_x = x_tele * Environnement::scale;
+//  		_y = y_tele * Environnement::scale;
+//  	}
+//  }

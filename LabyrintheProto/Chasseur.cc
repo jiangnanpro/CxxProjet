@@ -11,31 +11,31 @@ using namespace std;
 #define PI 3.14159265
 
 /**
- * This file contians functions about hunters. These functions is responsible for 
+ * This file contians functions about hunters. These functions is responsible for
  * how the hunter walks, how he fires and how the fireball flies in diffrent situations.
- * 
+ *
  * The system will automatically call all functions in this file,
  * so that the state of the hunter and fireball will be processed at every moment.
- * 
+ *
  * bool Chasseur::move_aux (double dx, double dy):
- * 
- * 		This function completes a movement of Hunter. 
- * 		
- * 		If hunter walks over a grid where the portal is located, there will be a message 
- * 		displayed in the upper left corner. And he can completes teleportation after 
+ *
+ * 		This function completes a movement of Hunter.
+ *
+ * 		If hunter walks over a grid where the portal is located, there will be a message
+ * 		displayed in the upper left corner. And he can completes teleportation after
  * 		keeping running sur the portals.
- * 		
- * 		If hunter walks over a grid where there is a medical kit aroud box, then he will 
+ *
+ * 		If hunter walks over a grid where there is a medical kit aroud box, then he will
  * 		get 20 hp.
  *
  * bool Chasseur::process_fireball (float dx, float dy):
- *		This function handles the different situations of the fireball during the flight. 
- *		
+ *		This function handles the different situations of the fireball during the flight.
+ *
  *		If there is nothing in the direction of the flight of fireball, it keeps flying.
  *		If fireball hits a guardian, the HP value of guardian will decreases. Puissance of
  *		fireball increases as distance between hunter and guardian increases.
- *		If fireball missed guardian, but the distance between fireball and guardian is 
- *		less than dis1, then guardian will move to the direction where fireball comes from. 
+ *		If fireball missed guardian, but the distance between fireball and guardian is
+ *		less than dis1, then guardian will move to the direction where fireball comes from.
  *		When the fireball is going to hit the guard, the guard will dodge randomly in a short distance.
  *
  * void Chasseur::fire (int angle_vertical)
@@ -45,7 +45,7 @@ using namespace std;
 
 /**
  * @Author      JiaxuanLIU and JiangnanHUANG
- * @Description Completing a movement of Hunter. 
+ * @Description Completing a movement of Hunter.
  * 				If there is a portals, hunter will complete teleportation after running sur place for a period of time.
  * 				If the grid is aroud a box, then HP value of hunter augments
  * @DateTime    2020-05-08T15:25:15+0100
@@ -53,6 +53,7 @@ using namespace std;
  * @param		dy: distance that hunter moves in x direction
  * @return		bool: if hunter moving in direction dx,dy successfully
  */
+
 bool Chasseur::move_aux (double dx, double dy)
 {
 	int pos_x = (int)(_x / Environnement::scale);
@@ -132,6 +133,7 @@ Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
  * 				fireball hits guardian, hits walls, hits treasure or misses guardian or there is noting.
  * @DateTime    2020-05-08T15:44:34+0100
  */
+
 bool Chasseur::process_fireball (float dx, float dy)
 {
 
@@ -174,7 +176,8 @@ bool Chasseur::process_fireball (float dx, float dy)
 			return false;
 
 		}
-		//If distance of fireball and guardian <= 10, then guardian will notice this attack. 
+		
+		//If distance of fireball and guardian <= 10, then guardian will notice this attack.
 		//And then he will forwards to the direction where the attack comes from, even if he does't see hunter.
 
 		if ( abs(pos_of_guard_x - pos_of_fb_x) + abs(pos_of_guard_y - pos_of_fb_y) <= 10)
@@ -230,6 +233,7 @@ bool Chasseur::process_fireball (float dx, float dy)
  * @Description Initialize the angle of the fireball
  * 				Hunter fires, but fire angle drift when HP goes down.
  */
+
 void Chasseur::fire (int angle_vertical)
 {
 	message ("Woooshh...");
@@ -249,7 +253,7 @@ void Chasseur::fire (int angle_vertical)
 //  *	Inutile dans le vrai jeu, mais c'est juste pour montrer
 //  *	une utilisation des fonctions < tomber > et < rester_au_sol >
 //  */
-//  void Chasseur::right_click (bool shift, bool control) {                       // this funtion doesn't work! it's fake
+//  void Chasseur::right_click (bool shift, bool control) {                       // this funtion is not used(old version of Teleportation)
 
 //  	if (shift) {
 //  		cout<<"hahaha"<<endl;

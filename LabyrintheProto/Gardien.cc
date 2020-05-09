@@ -14,10 +14,12 @@ using namespace std;
 /**
 		This file contains functions related to guards. Defend your own defense level variables. There is also a variable of threat level.
 		The threat level depends on the number of guards lost, the distance from the guard to the treasure and the distance from the hunter to the treasure. See function for details: update_defense ()
-		The system calls these functions automatically. Each time the relative angle of the guard to the hunter is updated. Compare the threat level and defense level to determine the status of the guard. 
+		The system calls these functions automatically. Each time the relative angle of the guard to the hunter is updated. Compare the threat level and defense level to determine the status of the guard.
 		The guard actions in different states are different. For details, see: update ()
 		The guard can see the hunter, and knows the hunter's position.
  */
+
+
 bool Gardien::move_aux (double dx, double dy)
 {
 	dx *= times_of_spead;
@@ -38,6 +40,7 @@ bool Gardien::move_aux (double dx, double dy)
  * @DateTime    2020-05-08T19:01:51+0100
  * @inovation   called in function : update()
  */
+
 void Gardien::set_angle_to_chasseur() {
 	distance_to_chasseur_x = _x - _l -> _guards[0] -> _x;
 	distance_to_chasseur_y = _y - _l -> _guards[0] -> _y;
@@ -51,11 +54,12 @@ void Gardien::set_angle_to_chasseur() {
  * 				State 0: Patrol.  The default state of the guardian when the game starts,the guardians walk randomly around the Labyrinth
  * 				State 1: Defense.  When the threat level is greater than 6, the guardian be-gins to approach the treasure (According to the arrayint **distancetotreasure)
  * 				State 2: Emergency defense.  When the threat level is greater than 8, theguardian approaches the treasure at a faster rate
- * 				State 3: Attack.  When the guardian sees the hunter, he will attack thehunter.   
+ * 				State 3: Attack.  When the guardian sees the hunter, he will attack thehunter.
  * 						 The  guardian  heads  towards  the  hunter  and  fires  at  intervals.
  * 						 When the hunter is not visible any more, the guard will no longer be instate 3, but will return to the previous state
  * @DateTime    2020-05-08T19:04:19+0100
  */
+
 void Gardien::update() {
 
 	if (!isDead) {                                      // if the gardien is dead, ignore it.
@@ -125,13 +129,15 @@ void Gardien::update() {
 
   }
 }
+
 /**
  * @Author      JiaxuanLIU and JiangnanHUANG
  * @Description This fuction  handles the different situations of the fireball during the flight: hits hunter or there is nothing
  * 				If fireball hits hunter, the HP of hunter decreases.
- * 				Else fireball keeps moving. 
+ * 				Else fireball keeps moving.
  * @DateTime    2020-05-08T19:13:56+0100
  */
+
 bool Gardien::process_fireball (float dx, float dy) {
 
 	float	x = (_x - _fb -> get_x ()) / Environnement::scale;
@@ -189,6 +195,7 @@ void Gardien::fire (int angle_vertical) {
  * @DateTime    2020-05-08T19:16:30+0100
  * @return
  */
+
 bool Gardien::see_chasseur () {
 
 	if (distance_to_chasseur > max_view_distance) {
@@ -221,10 +228,11 @@ bool Gardien::see_chasseur () {
 /**
  * @Author      JiaxuanLIU and JiangnanHUANG
  * @Description Update the level of defense:
- * 				The state of guardian decided by the defense value which is calculated based on 
+ * 				The state of guardian decided by the defense value which is calculated based on
  * 				the guardian’s own distance to treasure, the distance from hunter totreasure and the number of dead guardians
  * @DateTime    2020-05-08T19:44:36+0100
  */
+
 void Gardien::update_defense() {
 
 	defense = 0;
@@ -244,6 +252,7 @@ void Gardien::update_defense() {
  * @DateTime    2020-05-08T19:46:49+0100
  * @return
  */
+
 int Gardien::num_of_guard_dead() {
 
 	int res = 0;
@@ -261,6 +270,7 @@ int Gardien::num_of_guard_dead() {
  * @DateTime    2020-05-08T19:48:04+0100
  * @invocation  called by function: update()
  */
+
 void Gardien::judge_mode(float step_x, float step_y) {
 
 	if(defense < threat_level_move)
@@ -298,6 +308,7 @@ void Gardien::judge_mode(float step_x, float step_y) {
  * @return		the distance of chasseur to treasure.
  * @invocation  Called by function:update_defense()
  */
+
 int Gardien::dis_to_tresor_of_chasseur() {
 
 	int chasseur_x = (int)((_l -> _guards [0] -> _x) / Environnement::scale );
@@ -314,6 +325,7 @@ int Gardien::dis_to_tresor_of_chasseur() {
  * 				Each time guardian choose the shortest distance and the right angle corresponding.
  * @DateTime    2020-05-08T19:53:23+0100
  */
+ 
 void Gardien::go_to_treasure() {
 
 	//Determine where to go next based on the surrounding distance_to_tresor
